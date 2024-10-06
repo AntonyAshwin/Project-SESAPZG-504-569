@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const mongorun = require('./mongodb/connection')
 
 app.use(express.json());
 
@@ -8,6 +9,13 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
+
+
+app.get('/mongo', (req, res) => {
+  mongorun();
+  res.send('mongodb connected');
+});
+
 
 
 app.listen(PORT, () => {
