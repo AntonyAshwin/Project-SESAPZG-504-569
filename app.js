@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 
 app.get('/mongo', (req, res) => {
   mongorun();
-  res.send('mongodb connected');
+  res.send('mongodb connected - working');
 });
 
 
