@@ -1,17 +1,38 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-
 const router = express.Router();
 
-// Registration Route
+// Register Route
 router.post('/register', async (req, res) => {
-    const { name, email, password, role } = req.body;
+    const {
+        name,
+        email,
+        password,
+        role,
+        dateOfBirth,
+        address,
+        phoneNumber,
+        aadhaarCardNumber,
+        pan,
+        gstin,
+        businessAddress,
+        businessLicense
+    } = req.body;
 
     // Validate role
     if (!['buyer', 'seller'].includes(role)) {
         return res.status(400).json({ message: 'Invalid role' });
+    }
+
+    // Validate mandatory fields
+    if (!name || !email || !password || !dateOfBirth || !address || !phoneNumber || !aadhaarCardNumber || !pan) {
+        return res.status(400).json({ message: 'All mandatory fields must be provided' });
+    }
+
+    // Additional validation for sellers
+    if (role === 'seller' && (!gstin || !businessAddress || !businessLicense)) {
+        return res.status(400).json({ message: 'All seller-specific fields must be provided' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -20,7 +41,15 @@ router.post('/register', async (req, res) => {
         name,
         email,
         password: hashedPassword,
-        role, // Include the role in the user object
+        role,
+        dateOfBirth,
+        address,
+        phoneNumber,
+        aadhaarCardNumber,
+        pan,
+        gstin: role === 'seller' ? gstin : undefined,
+        businessAddress: role === 'seller' ? businessAddress : undefined,
+        businessLicense: role === 'seller' ? businessLicense : undefined,
     });
 
     try {
@@ -30,7 +59,6 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ message: 'Error registering user', error: err.message });
     }
 });
-
 
 // Login Route
 router.post('/login', async (req, res) => {

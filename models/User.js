@@ -23,6 +23,47 @@ const UserSchema = new mongoose.Schema({
         required: true,
         enum: ['buyer', 'seller'], // Specify the allowed roles
     },
+    dateOfBirth: {
+        type: Date,
+        required: true,
+    },
+    address: {
+        type: String,
+        required: true,
+    },
+    phoneNumber: {
+        type: String,
+        required: true,
+    },
+    aadhaarCardNumber: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    pan: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    gstin: {
+        type: String,
+        required: function() {
+            return this.role === 'seller';
+        },
+        unique: true,
+    },
+    businessAddress: {
+        type: String,
+        required: function() {
+            return this.role === 'seller';
+        },
+    },
+    businessLicense: {
+        type: String,
+        required: function() {
+            return this.role === 'seller';
+        },
+    },
 });
 
 module.exports = mongoose.model('User', UserSchema);
