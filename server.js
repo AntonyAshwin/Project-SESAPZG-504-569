@@ -17,7 +17,7 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch(err => console.log(err));
 
 // Use authentication routes
-app.use('/api/auth', authRoutes); // Prefix for auth routes
+app.use('/auth', authRoutes); // Prefix for auth routes
 
 // Start the server
 const PORT = process.env.PORT || 8080;
