@@ -40,6 +40,11 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    publicKey: {   //metamask public key for storing data the address equivalent to some username
+        type: String,
+        required: true,
+        unique: true,
+    },
     pan: {
         type: String,
         required: true,

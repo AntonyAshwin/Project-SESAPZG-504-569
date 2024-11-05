@@ -14,6 +14,7 @@ router.post('/register', async (req, res) => {
         address,
         phoneNumber,
         aadhaarCardNumber,
+        publicKey,
         pan,
         gstin,
         businessAddress,
@@ -26,7 +27,7 @@ router.post('/register', async (req, res) => {
     }
 
     // Validate mandatory fields
-    if (!name || !email || !password || !dateOfBirth || !address || !phoneNumber || !aadhaarCardNumber || !pan) {
+    if (!name || !email || !password || !dateOfBirth || !address || !phoneNumber || !aadhaarCardNumber || !pan || !publicKey) {
         return res.status(400).json({ message: 'All mandatory fields must be provided' });
     }
 
@@ -46,6 +47,7 @@ router.post('/register', async (req, res) => {
         address,
         phoneNumber,
         aadhaarCardNumber,
+        publicKey,
         pan,
         gstin: role === 'seller' ? gstin : undefined,
         businessAddress: role === 'seller' ? businessAddress : undefined,
