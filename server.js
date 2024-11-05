@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth'); // Import auth routes
-const dashboardRoutes = require('./routes/dashboard');
+const ProfileRoutes = require('./routes/profile');
 
 dotenv.config();
 
@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Use authentication routes
 app.use('/auth', authRoutes); // Prefix for auth routes
-app.use('/dashboard', dashboardRoutes);
+app.use('/profile', ProfileRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 8080;

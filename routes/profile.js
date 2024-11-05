@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User'); // Adjust the path as necessary
 const authMiddleware = require('../middleware/authMiddleware'); // Middleware to protect routes
 
-// Dashboard route to get user details
+// Profile route to get user details
 router.get('/', authMiddleware, async (req, res) => {
     try {
         // Extract user ID from the JWT token
