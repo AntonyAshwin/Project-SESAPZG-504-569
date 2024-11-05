@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth'); // Import auth routes
-const ProfileRoutes = require('./routes/profile');
+const profileRoutes = require('./routes/profile');
+const getUserRoutes = require('./routes/getUser');
+const transactionRoutes = require('./routes/transaction'); // Import transaction routes
 
 dotenv.config();
 
@@ -17,9 +19,11 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.log(err));
 
-// Use authentication routes
+// Use routes
 app.use('/auth', authRoutes); // Prefix for auth routes
-app.use('/profile', ProfileRoutes);
+app.use('/profile', profileRoutes);
+app.use('/user', getUserRoutes);
+app.use('/transaction', transactionRoutes); // Prefix for transaction routes
 
 // Start the server
 const PORT = process.env.PORT || 8080;
