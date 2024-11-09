@@ -1,0 +1,326 @@
+openapi: 3.0.0
+info:
+  title: Gold Asset Management API
+  version: 1.0.0
+  description: API for managing gold assets on the blockchain
+
+servers:
+  - url: http://localhost:8080/api
+
+paths:
+  /auth/register:
+    post:
+      summary: Registers a new user (either a buyer or a seller)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Server error
+
+  /auth/login:
+    post:
+      summary: Authenticates a user and provides an access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+      responses:
+        '200':
+          description: Authentication successful
+        '400':
+          description: Invalid credentials
+        '500':
+          description: Server error
+
+  /gold/register:
+    post:
+      summary: Registers gold as a digital asset on the blockchain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterGold'
+      responses:
+        '201':
+          description: Gold registered successfully
+        '400':
+          description: Invalid input
+        '500':
+          description: Server error
+
+  /seller/gold:
+    get:
+      summary: Retrieves all gold assets registered by the seller
+      responses:
+        '200':
+          description: List of gold assets
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /seller/gold/transfers:
+    get:
+      summary: Retrieves ownership transfer records initiated by the seller
+      responses:
+        '200':
+          description: List of transfer records
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /gold/transfer:
+    post:
+      summary: Transfers ownership of a registered gold asset to a buyer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferGold'
+      responses:
+        '200':
+          description: Transfer successful
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /gold/verify-owner/{goldId}:
+    get:
+      summary: Verifies the last registered owner of the specified gold asset
+      parameters:
+        - name: goldId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Owner verified
+        '404':
+          description: Gold asset not found
+        '500':
+          description: Server error
+
+  /buyer/gold/acquire:
+    post:
+      summary: Allows the buyer to acquire ownership of gold from the seller
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcquireGold'
+      responses:
+        '200':
+          description: Acquisition successful
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /buyer/gold:
+    get:
+      summary: Retrieves all gold assets owned by the buyer
+      responses:
+        '200':
+          description: List of gold assets
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /buyer/gold/transfer:
+    post:
+      summary: Transfers ownership of a gold asset to another person
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferGold'
+      responses:
+        '200':
+          description: Transfer successful
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /buyer/gold/transactions:
+    get:
+      summary: Retrieves transaction logs for all gold assets owned by the buyer
+      responses:
+        '200':
+          description: List of transaction logs
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /gold/{goldId}:
+    get:
+      summary: Fetches details of a specific gold asset
+      parameters:
+        - name: goldId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Gold asset details
+        '404':
+          description: Gold asset not found
+        '500':
+          description: Server error
+
+  /gold/transactions:
+    get:
+      summary: Retrieves a list of all transactions made for any gold asset
+      responses:
+        '200':
+          description: List of transactions
+        '500':
+          description: Server error
+
+  /gold/{goldId}/ownership-history:
+    get:
+      summary: Retrieves the ownership history of the specified gold asset
+      parameters:
+        - name: goldId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ownership history
+        '404':
+          description: Gold asset not found
+        '500':
+          description: Server error
+
+  /buyer/{buyerId}/is-registered:
+    get:
+      summary: Checks if a given buyer is registered on the blockchain
+      parameters:
+        - name: buyerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Buyer is registered
+        '404':
+          description: Buyer not found
+        '500':
+          description: Server error
+
+components:
+  schemas:
+    RegisterUser:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: ['buyer', 'seller']
+        dateOfBirth:
+          type: string
+          format: date
+        address:
+          type: string
+        phoneNumber:
+          type: string
+        aadhaarCardNumber:
+          type: string
+        publicKey:
+          type: string
+        pan:
+          type: string
+        gstin:
+          type: string
+        businessAddress:
+          type: string
+        businessLicense:
+          type: string
+      required:
+        - name
+        - email
+        - password
+        - role
+        - dateOfBirth
+        - address
+        - phoneNumber
+        - aadhaarCardNumber
+        - publicKey
+        - pan
+
+    LoginUser:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    RegisterGold:
+      type: object
+      properties:
+        goldId:
+          type: string
+        description:
+          type: string
+      required:
+        - goldId
+
+    TransferGold:
+      type: object
+      properties:
+        goldId:
+          type: string
+        buyerId:
+          type: string
+      required:
+        - goldId
+        - buyerId
+
+    AcquireGold:
+      type: object
+      properties:
+        goldId:
+          type: string
+        sellerId:
+          type: string
+      required:
+        - goldId
+        - sellerId
