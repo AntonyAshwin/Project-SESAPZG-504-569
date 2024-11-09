@@ -14,6 +14,11 @@ const TransactionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now, // Automatically set to the current date and time when a transaction is created
     },
+    transactionType: {
+        type: String,
+        required: true,
+        enum: ['register', 'transfer'], // Specify the allowed transaction types
+    },
 });
 
 module.exports = mongoose.model('Transaction', TransactionSchema);

@@ -2,15 +2,20 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Transaction = require('../models/Transaction');
+const User = require('../models/User');
 const authMiddleware = require('../middleware/authMiddleware'); // Middleware to protect routes
 
 // Route to add a new transaction
 router.post('/', authMiddleware, async (req, res) => {
-    const { goldId } = req.body;
+    const { goldId, transactionType } = req.body;
 
     // Validate input
-    if (!goldId) {
-        return res.status(400).json({ message: 'Gold ID is required' });
+    if (!goldId || !transactionType) {
+        return res.status(400).json({ message: 'Gold ID and transaction type are required' });
+    }
+
+    if (!['register', 'transfer'].includes(transactionType)) {
+        return res.status(400).json({ message: 'Invalid transaction type' });
     }
 
     try {
@@ -23,11 +28,22 @@ router.post('/', authMiddleware, async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.id;
 
+        // Fetch user details to check the role
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (transactionType === 'register' && user.role !== 'seller') {
+            return res.status(403).json({ message: 'Only sellers can register gold' });
+        }
+
         // Create a new transaction
         const newTransaction = new Transaction({
             userId,
             goldId,
             transactionTime: Date.now(), // Set the transaction time to the current date and time
+            transactionType,
         });
 
         // Save the transaction to the database
@@ -52,14 +68,8 @@ router.get('/', authMiddleware, async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.id;
 
-        // Log the userId for debugging
-        console.log(`Fetching transactions for user: ${userId}`);
-
         // Fetch all transactions for the user
         const transactions = await Transaction.find({ userId });
-
-        // Log the transactions for debugging
-        console.log(`Transactions found: ${JSON.stringify(transactions)}`);
 
         res.json(transactions);
     } catch (error) {
