@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cors = require('cors'); // Import the cors package
 const authRoutes = require('./routes/auth'); // Import auth routes
 const profileRoutes = require('./routes/profile');
 const getUserRoutes = require('./routes/getUser');
@@ -10,6 +11,9 @@ dotenv.config();
 
 const app = express();
 app.use(express.json()); // Parse JSON bodies
+
+// Enable CORS
+app.use(cors());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
