@@ -12,7 +12,7 @@ HOW TO LOCALLY RUN IT
 3. npm i - will install all dependencies for both frontend and backend, you might have to instal jsonwebtoken again if that error comes up when running - not sure why
 4. npm start - will run both frontend and backend -
 5. 
-   . if mongouri is undefined error then you probably didnt set the .env file in the right directory or you have a type in there
+   . if mongouri is undefined error then you probably didnt set the .env file in the right directory or you have a typo in there
    
    . please use your on mongouri to see the changes \n
    
