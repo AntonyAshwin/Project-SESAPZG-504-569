@@ -14,7 +14,7 @@ HOW TO LOCALLY RUN IT
 5. 
    . if mongouri is undefined error then you probably didnt set the .env file in the right directory or you have a typo in there
    
-   . please use your on mongouri to see the changes \n
+   . please use your own mongouri to see the db changes \n
    
    . if port error then you probably have that port being used somewhere, please use npx kill-port <port-number> to kill that port.
    
