@@ -9,8 +9,8 @@ HOW TO LOCALLY RUN IT
     PORT=8080
     MONGO_URI= <mongodb uri to connect to the cluster>
     JWT_SECRET= <your jwt secret key>
-3. npm i - will install all dependencies for both frontend and backend, you might have to instal jsonwebtoken again if that error comes up when running - not sure why
-4. npm start - will run both frontend and backend -
+3. npm i - will install all dependencies for both frontend and backend (i have updared the package.json to have a cd and run npm i again in frontend), you might have to instal jsonwebtoken again if that error comes up when running - not sure why
+4. npm start - will run both frontend and backend because of the script in package.json (to individually run them just npm start at root for backend, cd inside frontend and npm start to run the frontend)
 5. 
    . if mongouri is undefined error then you probably didnt set the .env file in the right directory or you have a typo in there
    
