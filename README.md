@@ -18,7 +18,7 @@ HOW TO LOCALLY RUN IT
    
    . if port error then you probably have that port being used somewhere, please use npx kill-port <port-number> to kill that port.
    
-   . if all works fine then the UI should automatically load on your browser (or maybe its only for vscode not sure)
+   . if all works fine then the UI should load on your browser on its own (or maybe its only for vscode not sure)
 
 
 
