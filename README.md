@@ -11,8 +11,8 @@ HOW TO LOCALLY RUN IT
     JWT_SECRET= <your jwt secret key>
 3. npm i - will install all dependencies for both frontend and backend, you might have to instal jsonwebtoken again if that error comes up when running - not sure why
 4. npm start - will run both frontend and backend -
-   > if mongouri is undefined error then you probably didnt set the .env file in the right directory or you have a type in there
-   > please use your on mongouri to see the changes
+   > if mongouri is undefined error then you probably didnt set the .env file in the right directory or you have a type in there \n
+   > please use your on mongouri to see the changes \n
    > if port error then you probably have that port being used somewhere, please use npx kill-port <port-number> to kill that port.
    > if all works fine then the UI should automatically load on your browser (or maybe its only for vscode not sure)
 
