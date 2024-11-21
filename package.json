@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "postinstall": "cd frontend && npm install",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "concurrently \"npm run start-server\" \"npm run start-client\"",
+    "start-server": "node server.js",
+    "start-client": "cd frontend && npm start"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
