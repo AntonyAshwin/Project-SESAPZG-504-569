@@ -5,13 +5,16 @@ Hi All,  I am Antony Ashwin (2023sl93002). I am currently completing my 3rd seme
 HOW TO LOCALLY RUN IT 
 
 1. Clone this repo 
-2. Get the .env file from me or you can just make one yourself
+2. Get the .env file from me or you can just make one yourself (please put the .env at the root level)
     PORT=8080
     MONGO_URI= <mongodb uri to connect to the cluster>
     JWT_SECRET= <your jwt secret key>
-3. npm install - will install all dependencies, you might have to instal jsonwebtoken again - not sure why
-4. npm start
-5. no frontend so far so please reach out to me to get the postman env and collections -you can create them on your own aswell after looking at the model and the routes
+3. npm i - will install all dependencies for both frontend and backend, you might have to instal jsonwebtoken again if that error comes up when running - not sure why
+4. npm start - will run both frontend and backend -
+   > if mongouri is undefined error then you probably didnt set the .env file in the right directory or you have a type in there
+   > please use your on mongouri to see the changes
+   > if port error then you probably have that port being used somewhere, please use npx kill-port <port-number> to kill that port.
+   > if all works fine then the UI should automatically load on your browser (or maybe its only for vscode not sure)
 
 
 
