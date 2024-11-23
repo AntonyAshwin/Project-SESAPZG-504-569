@@ -19,6 +19,12 @@ const TransactionSchema = new mongoose.Schema({
         required: true,
         enum: ['register', 'transfer'], // Specify the allowed transaction types
     },
+    recipientPublicKey: {
+        type: String,
+        required: function() {
+            return this.transactionType === 'transfer';
+        },
+    },
 });
 
 module.exports = mongoose.model('Transaction', TransactionSchema);

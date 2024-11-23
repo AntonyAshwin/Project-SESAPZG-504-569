@@ -7,7 +7,7 @@ const authMiddleware = require('../middleware/authMiddleware'); // Middleware to
 
 // Route to add a new transaction
 router.post('/', authMiddleware, async (req, res) => {
-    const { goldId, transactionType } = req.body;
+    const { goldId, transactionType, recipientPublicKey } = req.body;
 
     // Validate input
     if (!goldId || !transactionType) {
@@ -16,6 +16,10 @@ router.post('/', authMiddleware, async (req, res) => {
 
     if (!['register', 'transfer'].includes(transactionType)) {
         return res.status(400).json({ message: 'Invalid transaction type' });
+    }
+
+    if (transactionType === 'transfer' && !recipientPublicKey) {
+        return res.status(400).json({ message: 'Recipient public key is required for transfer transactions' });
     }
 
     try {
@@ -44,6 +48,7 @@ router.post('/', authMiddleware, async (req, res) => {
             goldId,
             transactionTime: Date.now(), // Set the transaction time to the current date and time
             transactionType,
+            recipientPublicKey: transactionType === 'transfer' ? recipientPublicKey : undefined,
         });
 
         // Save the transaction to the database
