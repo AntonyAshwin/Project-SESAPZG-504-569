@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
@@ -18,8 +18,32 @@ function Register() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (typeof window.ethereum === 'undefined') {
+      setError('MetaMask is not installed. Please install MetaMask to continue.');
+    }
+  }, []);
+
+  const connectMetaMask = async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        setPublicKey(accounts[0]);
+      } catch (err) {
+        setError('Failed to connect to MetaMask. Please try again.');
+      }
+    } else {
+      setError('MetaMask is not installed. Please install MetaMask to continue.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!publicKey) {
+      setError('Please connect to MetaMask to continue.');
+      return;
+    }
+
     const userData = {
       name,
       email,
@@ -136,9 +160,10 @@ function Register() {
           <input
             type="text"
             value={publicKey}
-            onChange={(e) => setPublicKey(e.target.value)}
+            readOnly
             required
           />
+          <button type="button" onClick={connectMetaMask}>Connect MetaMask</button>
         </div>
         <div>
           <label>PAN:</label>
