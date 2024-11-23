@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,9 +20,8 @@ function Login() {
 
       const data = await response.json();
       if (response.ok) {
-        // Save the JWT token to localStorage
         localStorage.setItem('token', data.token);
-        // Redirect to the home page
+        setIsAuthenticated(true);
         navigate('/');
       } else {
         setError(data.message || 'Login failed');
