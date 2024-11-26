@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState('');
@@ -20,7 +21,9 @@ function Login({ setIsAuthenticated }) {
 
       const data = await response.json();
       if (response.ok) {
+        const decodedToken = jwtDecode(data.token);
         localStorage.setItem('token', data.token);
+        localStorage.setItem('role', decodedToken.role); // Store the role in localStorage
         setIsAuthenticated(true);
         navigate('/');
       } else {
