@@ -72,11 +72,31 @@ router.get('/', authMiddleware, async (req, res) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.id;
+        
+        // **Pagination logic** - Extract 'page' and 'limit' from query parameters
+        const page = parseInt(req.query.page) || 1; // Default to page 1
+        const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+        const skip = (page - 1) * limit;
 
-        // Fetch all transactions for the user
-        const transactions = await Transaction.find({ userId });
+        // Fetch paginated transactions for the user
+        const transactions = await Transaction.find({ userId })
+            .sort({ transactionTime: -1 }) // Sort by most recent transaction
+            .skip(skip) // Skip documents for previous pages
+            .limit(limit); // Limit the number of results to 'limit'
 
-        res.json(transactions);
+        // Fetch total count for pagination metadata
+        const totalTransactions = await Transaction.countDocuments({ userId });
+
+        // **Return paginated results and metadata**
+        res.json({
+            transactions,
+            pagination: {
+                total: totalTransactions,
+                page,
+                limit,
+                totalPages: Math.ceil(totalTransactions / limit),
+            },
+        });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server error');
