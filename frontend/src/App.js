@@ -5,9 +5,12 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Profile from './components/Profile';
 import Home from './components/Home';
+import Transactions from './components/Transactions';
+import { FaSun, FaMoon } from 'react-icons/fa';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,6 +18,9 @@ function App() {
     if (token) {
       setIsAuthenticated(true);
     }
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    setDarkMode(savedDarkMode);
+    document.body.classList.toggle('dark-mode', savedDarkMode);
   }, []);
 
   const handleSignOut = () => {
@@ -23,10 +29,19 @@ function App() {
     navigate('/login');
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    localStorage.setItem('darkMode', !darkMode);
+    document.body.classList.toggle('dark-mode', !darkMode);
+  };
+
   return (
     <div className="App">
       <nav className="navbar">
         <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
           {!isAuthenticated ? (
             <>
               <li>
@@ -37,16 +52,30 @@ function App() {
               </li>
             </>
           ) : (
-            <li>
-              <button onClick={handleSignOut}>Sign Out</button>
-            </li>
+            <>
+              <li>
+                <Link to="/profile">Profile</Link>
+              </li>
+              <li>
+                <Link to="/transactions">Transactions</Link>
+              </li>
+              <li>
+                <button onClick={handleSignOut}>Sign Out</button>
+              </li>
+            </>
           )}
+          <li>
+            <button onClick={toggleDarkMode} className="dark-mode-toggle">
+              {darkMode ? <FaSun /> : <FaMoon />}
+            </button>
+          </li>
         </ul>
       </nav>
       <Routes>
         <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/transactions" element={<Transactions />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </div>
