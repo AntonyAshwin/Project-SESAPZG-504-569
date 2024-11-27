@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Register.css';
 
 function Register() {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [role, setRole] = useState('buyer');
-  const [dateOfBirth, setDateOfBirth] = useState('');
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [aadhaarCardNumber, setAadhaarCardNumber] = useState('');
@@ -16,40 +16,51 @@ function Register() {
   const [businessAddress, setBusinessAddress] = useState('');
   const [businessLicense, setBusinessLicense] = useState('');
   const [error, setError] = useState('');
+  const [showAadhaar, setShowAadhaar] = useState(false);
+  const [showPan, setShowPan] = useState(false);
+  const [metamaskConnected, setMetamaskConnected] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (typeof window.ethereum === 'undefined') {
-      setError('MetaMask is not installed. Please install MetaMask to continue.');
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length > 0) {
+          setPublicKey(accounts[0]);
+          setMetamaskConnected(true);
+        } else {
+          setPublicKey('');
+          setMetamaskConnected(false);
+        }
+      });
     }
   }, []);
 
-  const connectMetaMask = async () => {
-    if (typeof window.ethereum !== 'undefined') {
+  const connectMetamask = async () => {
+    if (window.ethereum) {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         setPublicKey(accounts[0]);
+        setMetamaskConnected(true);
       } catch (err) {
-        setError('Failed to connect to MetaMask. Please try again.');
+        setError('Failed to connect to MetaMask');
       }
     } else {
-      setError('MetaMask is not installed. Please install MetaMask to continue.');
+      setError('MetaMask is not installed');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!publicKey) {
-      setError('Please connect to MetaMask to continue.');
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      setError('Phone number must be 10 digits long');
       return;
     }
 
     const userData = {
-      name,
       email,
       password,
+      name,
       role,
-      dateOfBirth,
       address,
       phoneNumber,
       aadhaarCardNumber,
@@ -81,11 +92,11 @@ function Register() {
   };
 
   return (
-    <div>
+    <div className="register-container">
       <h2>Register</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="form-group">
           <label>Name:</label>
           <input
             type="text"
@@ -94,7 +105,7 @@ function Register() {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Email:</label>
           <input
             type="email"
@@ -103,7 +114,7 @@ function Register() {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
@@ -112,23 +123,30 @@ function Register() {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Role:</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="buyer">Buyer</option>
-            <option value="seller">Seller</option>
-          </select>
+          <div className="role-selection">
+            <label>
+              <input
+                type="radio"
+                value="buyer"
+                checked={role === 'buyer'}
+                onChange={(e) => setRole(e.target.value)}
+              />
+              Buyer
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="seller"
+                checked={role === 'seller'}
+                onChange={(e) => setRole(e.target.value)}
+              />
+              Seller
+            </label>
+          </div>
         </div>
-        <div>
-          <label>Date of Birth:</label>
-          <input
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-            required
-          />
-        </div>
-        <div>
+        <div className="form-group">
           <label>Address:</label>
           <input
             type="text"
@@ -137,7 +155,7 @@ function Register() {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Phone Number:</label>
           <input
             type="text"
@@ -146,16 +164,7 @@ function Register() {
             required
           />
         </div>
-        <div>
-          <label>Aadhaar Card Number:</label>
-          <input
-            type="text"
-            value={aadhaarCardNumber}
-            onChange={(e) => setAadhaarCardNumber(e.target.value)}
-            required
-          />
-        </div>
-        <div>
+        <div className="form-group">
           <label>Public Key:</label>
           <input
             type="text"
@@ -163,20 +172,51 @@ function Register() {
             readOnly
             required
           />
-          <button type="button" onClick={connectMetaMask}>Connect MetaMask</button>
+          {!metamaskConnected && (
+            <button type="button" onClick={connectMetamask} className="connect-metamask-button">
+              Connect MetaMask
+            </button>
+          )}
         </div>
-        <div>
+        <div className="form-group">
           <label>PAN:</label>
-          <input
-            type="text"
-            value={pan}
-            onChange={(e) => setPan(e.target.value)}
-            required
-          />
+          <div className="input-with-toggle">
+            <input
+              type={showPan ? 'text' : 'password'}
+              value={pan}
+              onChange={(e) => setPan(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPan(!showPan)}
+              className="toggle-button"
+            >
+              {showPan ? 'Hide' : 'Show'}
+            </button>
+          </div>
+        </div>
+        <div className="form-group">
+          <label>Aadhaar Card Number:</label>
+          <div className="input-with-toggle">
+            <input
+              type={showAadhaar ? 'text' : 'password'}
+              value={aadhaarCardNumber}
+              onChange={(e) => setAadhaarCardNumber(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowAadhaar(!showAadhaar)}
+              className="toggle-button"
+            >
+              {showAadhaar ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </div>
         {role === 'seller' && (
           <>
-            <div>
+            <div className="form-group">
               <label>GSTIN:</label>
               <input
                 type="text"
@@ -185,7 +225,7 @@ function Register() {
                 required
               />
             </div>
-            <div>
+            <div className="form-group">
               <label>Business Address:</label>
               <input
                 type="text"
@@ -194,7 +234,7 @@ function Register() {
                 required
               />
             </div>
-            <div>
+            <div className="form-group">
               <label>Business License:</label>
               <input
                 type="text"

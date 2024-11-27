@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './Profile.css';
 
 function Profile() {
   const [profile, setProfile] = useState(null);
@@ -44,12 +45,14 @@ function Profile() {
   }
 
   return (
-    <div>
-      <h2>Profile</h2>
-      <p>Name: {profile.name}</p>
-      <p>Email: {profile.email}</p>
-      <p>Role: {profile.role}</p>
-      {/* Add more profile details as needed */}
+    <div className="container fade-in">
+      <div className="card">
+        <h2>Profile</h2>
+        <p>Name: {profile.name}</p>
+        <p>Email: {profile.email}</p>
+        <p>Role: {profile.role}</p>
+        {/* Add more profile details as needed */}
+      </div>
     </div>
   );
 }

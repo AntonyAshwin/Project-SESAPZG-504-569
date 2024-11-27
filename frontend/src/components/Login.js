@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import './Login.css';
 
 function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState('');
@@ -32,11 +33,11 @@ function Login({ setIsAuthenticated }) {
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="form-group">
           <label>Email:</label>
           <input
             type="email"
@@ -45,7 +46,7 @@ function Login({ setIsAuthenticated }) {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
@@ -56,6 +57,10 @@ function Login({ setIsAuthenticated }) {
         </div>
         <button type="submit">Login</button>
       </form>
+      <div className="register-prompt">
+        <p>Don't have an account?</p>
+        <Link to="/register" className="button">Register</Link>
+      </div>
     </div>
   );
 }
