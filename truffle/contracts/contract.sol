@@ -5,13 +5,14 @@ contract GoldVerification {
     // Struct to represent a gold asset
     struct GoldAsset {
         uint256 goldId;
-        uint256 weight; // in grams
-        uint256 purity; // in parts per thousand (e.g., 999 for 99.9% pure)
+        uint16 weight; // in grams, maximum 99999 grams
+        uint8 purity; // in percentage, 0 - 100
         address currentOwner;
         address initialOwner; // Address of the first registrant
-        string shopId; // ID of the shop that registered the gold
+        bytes10 shopId; // PAN string
         uint256 registrationDate;
-
+        bytes3 goldType; // Type of gold (e.g., 24K, 22K)
+        bytes6 bisHallmark; // BIS Hallmark, 6-digit alphanumeric code
         // Array to hold ownership transfer details
         TransferRecord[] transferHistory;
     }
@@ -30,20 +31,16 @@ contract GoldVerification {
     uint256 public goldCounter;
 
     // Events
-    event GoldRegistered(uint256 goldId, address indexed owner, string shopId);
+    event GoldRegistered(uint256 goldId, address indexed owner, bytes10 shopId);
     event GoldTransferred(uint256 goldId, address indexed from, address indexed to);
-
-    // Modifier to check if the caller is the owner of a specific gold asset
-    modifier onlyOwner(uint256 goldId) {
-        require(goldAssets[goldId].currentOwner == msg.sender, "Not the owner");
-        _;
-    }
 
     // Function to register a new gold asset
     function registerGold(
-        uint256 weight,
-        uint256 purity,
-        string memory shopId
+        uint16 weight,
+        uint8 purity,
+        bytes10 shopId,
+        bytes3 goldType,
+        bytes6 bisHallmark
     ) public {
         // Generate a unique ID for the gold asset
         uint256 goldId = uint256(keccak256(abi.encodePacked(block.timestamp, goldCounter, shopId)));
@@ -58,6 +55,8 @@ contract GoldVerification {
         newGold.initialOwner = msg.sender; // Set initial owner
         newGold.shopId = shopId;
         newGold.registrationDate = block.timestamp;
+        newGold.goldType = goldType;
+        newGold.bisHallmark = bisHallmark;
 
         // Emit the event
         emit GoldRegistered(goldId, msg.sender, shopId);
@@ -84,7 +83,7 @@ contract GoldVerification {
 
     // Function to get the details of a gold asset
     function getGoldDetails(uint256 goldId) public view returns (
-        uint256, uint256, uint256, address, address, string memory, uint256
+        uint256, uint16, uint8, address, address, bytes10, uint256, bytes3, bytes6
     ) {
         GoldAsset storage gold = goldAssets[goldId];
         return (
@@ -94,12 +93,20 @@ contract GoldVerification {
             gold.currentOwner,
             gold.initialOwner, // Return initial owner
             gold.shopId,
-            gold.registrationDate
+            gold.registrationDate,
+            gold.goldType,
+            gold.bisHallmark
         );
     }
 
     // Function to get the ownership transfer history for a gold asset
     function getTransferHistory(uint256 goldId) public view returns (TransferRecord[] memory) {
         return goldAssets[goldId].transferHistory;
+    }
+
+    // Modifier to check if the caller is the owner of a specific gold asset
+    modifier onlyOwner(uint256 goldId) {
+        require(goldAssets[goldId].currentOwner == msg.sender, "Not the owner");
+        _;
     }
 }
