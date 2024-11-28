@@ -1,132 +1,73 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Transactions.css';
 
 function Transactions() {
   const [transactions, setTransactions] = useState([]);
-  const [user, setUser] = useState(null);
   const [error, setError] = useState('');
-  const token = localStorage.getItem('token');
-  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef();
+
+  const fetchTransactions = async (page) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('No token found. Please log in.');
+      return;
+    }
+    try {
+      const response = await fetch(`http://localhost:8080/transaction?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setTransactions((prevTransactions) => [...prevTransactions, ...data.transactions]);
+        setHasMore(page < data.pagination.totalPages);
+      } else {
+        setError(data.message || 'Failed to fetch transactions');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+    }
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!token) {
-        setError('No token found. Please log in.');
-        navigate('/login');
-        return;
+    fetchTransactions(page);
+  }, [page]);
+
+  const lastTransactionElementRef = useCallback((node) => {
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage((prevPage) => prevPage + 1);
       }
-
-      try {
-        const response = await fetch('http://localhost:8080/auth/me', {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-auth-token': token,
-          },
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setUser(data);
-        } else {
-          if (data.message === 'Token expired') {
-            setError('Session expired. Please log in again.');
-            localStorage.removeItem('token');
-            navigate('/login');
-          } else {
-            setError(data.message || 'Failed to fetch user data');
-          }
-        }
-      } catch (err) {
-        setError('An error occurred. Please try again.');
-      }
-    };
-
-    const fetchTransactions = async () => {
-      if (!token) {
-        setError('No token found. Please log in.');
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await fetch('http://localhost:8080/transactions', {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-auth-token': token,
-          },
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setTransactions(data);
-        } else {
-          if (data.message === 'Token expired') {
-            setError('Session expired. Please log in again.');
-            localStorage.removeItem('token');
-            navigate('/login');
-          } else {
-            setError(data.message || 'Failed to fetch transactions');
-          }
-        }
-      } catch (err) {
-        setError('An error occurred. Please try again.');
-      }
-    };
-
-    fetchUser();
-    fetchTransactions();
-  }, [token, navigate]);
-
-  if (error) {
-    return <p style={{ color: 'red' }}>{error}</p>;
-  }
-
-  if (!user) {
-    return <p>Loading...</p>;
-  }
+    });
+    if (node) observer.current.observe(node);
+  }, [hasMore]);
 
   return (
-    <div className="transactions-container">
-      <div className="sidebar">
-        <ul>
-          {user.role === 'seller' && (
-            <>
-              <li><button onClick={() => navigate('/register-gold')}>Register Gold</button></li>
-              <li><button onClick={() => navigate('/transfer-gold')}>Transfer Gold</button></li>
-              <li><button onClick={() => navigate('/sell-gold')}>Sell Gold</button></li>
-              <li><button onClick={() => navigate('/transactions')}>View Transactions</button></li>
-              <li><button onClick={() => navigate('/settings')}>Settings</button></li>
-            </>
-          )}
-          {user.role === 'buyer' && (
-            <>
-              <li><button onClick={() => navigate('/transactions')}>View Transactions</button></li>
-              <li><button onClick={() => navigate('/settings')}>Settings</button></li>
-            </>
-          )}
-        </ul>
-      </div>
-      <div className="main-content">
-        <h2>Transactions</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Gold ID</th>
-              <th>Transaction Type</th>
-              <th>Transaction Time</th>
-              {user.role === 'seller' && <th>Recipient Public Key</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((transaction) => (
-              <tr key={transaction._id}>
-                <td>{transaction.goldId}</td>
-                <td>{transaction.transactionType}</td>
-                <td>{new Date(transaction.transactionTime).toLocaleString()}</td>
-                {user.role === 'seller' && <td>{transaction.recipientPublicKey || 'N/A'}</td>}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="transactions-page">
+      <h1>Transactions</h1>
+      {error && <p className="error">{error}</p>}
+      <div className="transactions-list">
+        {transactions.map((transaction, index) => (
+          <div
+            key={transaction._id}
+            className="transaction"
+            ref={transactions.length === index + 1 ? lastTransactionElementRef : null}
+          >
+            <p><strong>Gold ID:</strong> {transaction.goldId}</p>
+            <p><strong>Transaction Type:</strong> {transaction.transactionType}</p>
+            <p><strong>Transaction Time:</strong> {new Date(transaction.transactionTime).toLocaleString()}</p>
+            <p><strong>Transaction Hash:</strong> {transaction.transactionHash}</p>
+            {transaction.recipientPublicKey && (
+              <p><strong>Recipient Public Key:</strong> {transaction.recipientPublicKey}</p>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
