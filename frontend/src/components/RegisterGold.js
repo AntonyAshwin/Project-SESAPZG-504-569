@@ -78,9 +78,44 @@ const RegisterGold = () => {
         console.log('Transaction receipt:', receipt);
         const event = receipt.events.GoldRegistered;
         console.log('GoldRegistered event:', event);
-        setRegisteredGoldId(event.returnValues.goldId.toString());
-        setTransactionId(receipt.transactionHash);
+
+        const goldId = event.returnValues.goldId.toString();
+        const transactionHash = receipt.transactionHash;
+
+        setRegisteredGoldId(goldId);
+        setTransactionId(transactionHash);
         setRegistrationResult('Gold registered successfully');
+
+        // Get the JWT token from localStorage
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setRegistrationResult('No token found. Please log in.');
+          return;
+        }
+
+        // Decode the JWT token to get the userId
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        const userId = decodedToken.id;
+
+        // Send the transaction data to the backend
+        const response = await fetch('http://localhost:8080/transaction', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token,
+          },
+          body: JSON.stringify({
+            userId,
+            goldId,
+            transactionType: 'register',
+            transactionHash,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          setRegistrationResult(data.message || 'Failed to save transaction');
+        }
       } catch (error) {
         console.error('Error registering gold:', error);
         setRegistrationResult('Error registering gold');
