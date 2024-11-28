@@ -18,11 +18,11 @@ body.dark-mode {
   height: 100vh;
   padding: 20px;
   box-sizing: border-box;
-  text-align: center;
 }
 
 .welcome-section {
   max-width: 600px;
+  text-align: center;
 }
 
 .welcome-section h1 {
@@ -50,6 +50,7 @@ body.dark-mode {
   text-decoration: none;
   font-size: 1em;
   transition: background-color 0.3s;
+  cursor: pointer;
 }
 
 .button:hover {
@@ -58,6 +59,7 @@ body.dark-mode {
 
 .user-section {
   max-width: 600px;
+  text-align: center;
 }
 
 .user-section h1 {
@@ -67,4 +69,5 @@ body.dark-mode {
 
 .user-section p {
   font-size: 1.2em;
+  margin-bottom: 30px;
 }
