@@ -25,6 +25,13 @@ const TransactionSchema = new mongoose.Schema({
             return this.transactionType === 'transfer';
         },
     },
+    transactionHash: {
+        type: String,
+        required: true,
+        unique: true, // Ensure transactionHash is unique
+    },
 });
+
+TransactionSchema.index({ transactionHash: 1 }, { unique: true });
 
 module.exports = mongoose.model('Transaction', TransactionSchema);

@@ -7,11 +7,11 @@ const authMiddleware = require('../middleware/authMiddleware'); // Middleware to
 
 // Route to add a new transaction
 router.post('/', authMiddleware, async (req, res) => {
-    const { goldId, transactionType, recipientPublicKey } = req.body;
+    const { goldId, transactionType, recipientPublicKey, transactionHash } = req.body;
 
     // Validate input
-    if (!goldId || !transactionType) {
-        return res.status(400).json({ message: 'Gold ID and transaction type are required' });
+    if (!goldId || !transactionType || !transactionHash) {
+        return res.status(400).json({ message: 'Gold ID, transaction type, and transaction hash are required' });
     }
 
     if (!['register', 'transfer'].includes(transactionType)) {
@@ -49,15 +49,16 @@ router.post('/', authMiddleware, async (req, res) => {
             transactionTime: Date.now(), // Set the transaction time to the current date and time
             transactionType,
             recipientPublicKey: transactionType === 'transfer' ? recipientPublicKey : undefined,
+            transactionHash,
         });
 
-        // Save the transaction to the database
         await newTransaction.save();
-
-        res.status(201).json({ message: 'Transaction added successfully', transaction: newTransaction });
+        res.status(201).json(newTransaction);
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send('Server error');
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Transaction hash must be unique' });
+        }
+        res.status(500).json({ error: 'Failed to create transaction' });
     }
 });
 
