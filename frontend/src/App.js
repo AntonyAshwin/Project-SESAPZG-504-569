@@ -6,6 +6,7 @@ import Register from './components/Register';
 import Profile from './components/Profile';
 import Home from './components/Home';
 import Transactions from './components/Transactions';
+import RegisterGold from './components/RegisterGold';
 import { FaSun, FaMoon } from 'react-icons/fa';
 
 function App() {
@@ -60,6 +61,9 @@ function App() {
                 <Link to="/transactions">Transactions</Link>
               </li>
               <li>
+                <Link to="/register-gold">Register Gold</Link>
+              </li>
+              <li>
                 <button onClick={handleSignOut}>Sign Out</button>
               </li>
             </>
@@ -76,6 +80,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/transactions" element={<Transactions />} />
+        <Route path="/register-gold" element={<RegisterGold />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </div>
