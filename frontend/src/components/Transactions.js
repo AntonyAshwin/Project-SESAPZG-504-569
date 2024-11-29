@@ -84,6 +84,7 @@ function Transactions() {
                 <tr
                   key={transaction._id}
                   ref={transactions.length === index + 1 ? lastTransactionElementRef : null}
+                  className={transaction.isSuccessful ? 'success' : 'failure'}
                 >
                   <td>{transaction.goldId}</td>
                   <td>{transaction.transactionType}</td>

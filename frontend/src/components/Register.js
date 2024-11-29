@@ -19,6 +19,7 @@ function Register() {
   const [showAadhaar, setShowAadhaar] = useState(false);
   const [showPan, setShowPan] = useState(false);
   const [metamaskConnected, setMetamaskConnected] = useState(false);
+  const [dateOfBirth, setDateOfBirth] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,6 +67,7 @@ function Register() {
       aadhaarCardNumber,
       publicKey,
       pan,
+      dateOfBirth, // Add this line
       gstin: role === 'seller' ? gstin : undefined,
       businessAddress: role === 'seller' ? businessAddress : undefined,
       businessLicense: role === 'seller' ? businessLicense : undefined,
@@ -120,6 +122,15 @@ function Register() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Date of Birth:</label>
+          <input
+            type="date"
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
             required
           />
         </div>

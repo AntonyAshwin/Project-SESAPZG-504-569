@@ -9,7 +9,7 @@ const TransferOwnership = () => {
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [contract, setContract] = useState(null);
-  const contractAddress = '0x3f2240b02ceac2bDeb0a50F71B4efD585365D524';
+  const contractAddress = '0x4612565ab51CA13b2d8f7E7426711Ad2777a1a2C';
 
   useEffect(() => {
     if (window.ethereum) {
@@ -37,6 +37,8 @@ const TransferOwnership = () => {
         const transactionHash = receipt.transactionHash;
         const goldIdFromEvent = event.returnValues.goldId;
 
+        console.log('Transaction Hash:', transactionHash);
+
         // Get the JWT token from localStorage
         const token = localStorage.getItem('token');
         if (!token) {
@@ -57,7 +59,7 @@ const TransferOwnership = () => {
           },
           body: JSON.stringify({
             userId,
-            goldId: goldIdFromEvent,
+            goldId: goldIdFromEvent.toString(), // Convert BigInt to string
             transactionType: 'transfer',
             transactionHash,
             recipientPublicKey: newOwner,
@@ -93,7 +95,7 @@ const TransferOwnership = () => {
           },
           body: JSON.stringify({
             userId,
-            goldId,
+            goldId: goldId.toString(), // Convert BigInt to string
             transactionType: 'transfer',
             transactionHash: 'N/A',
             recipientPublicKey: newOwner,

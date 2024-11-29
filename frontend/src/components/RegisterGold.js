@@ -14,7 +14,7 @@ const RegisterGold = () => {
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [contract, setContract] = useState(null);
-  const contractAddress = '0x3f2240b02ceac2bDeb0a50F71B4efD585365D524';
+  const contractAddress = '0x4612565ab51CA13b2d8f7E7426711Ad2777a1a2C';
 
   useEffect(() => {
     if (window.ethereum) {
