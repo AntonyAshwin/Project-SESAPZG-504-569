@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
+import contractAddress from '../contractAddress'; // Import the contract address
+
 const TransferOwnership = () => {
   const [goldId, setGoldId] = useState('');
   const [newOwner, setNewOwner] = useState('');
@@ -8,7 +10,6 @@ const TransferOwnership = () => {
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [contract, setContract] = useState(null);
-  const contractAddress = '0x4612565ab51CA13b2d8f7E7426711Ad2777a1a2C';
 
   useEffect(() => {
     if (window.ethereum) {
@@ -24,7 +25,7 @@ const TransferOwnership = () => {
     } else {
       console.error('MetaMask is not installed');
     }
-  }, [contractAddress]);
+  }, []);
 
   const transferOwnership = async () => {
     if (contract && accounts.length > 0) {
