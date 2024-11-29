@@ -129,29 +129,20 @@ const RegisterGold = () => {
           body: JSON.stringify({
             userId,
             goldId,
+            transactionType: 'register',
             transactionHash,
-            weight,
-            purity,
-            shopId,
-            goldType,
-            bisHallmark
           }),
         });
 
-        const responseData = await response.json();
-        if (!response.ok) {
-          setRegistrationResult(`Error: ${responseData.message}`);
+         if (!response.ok) {
+          const data = await response.json();
+          setRegistrationResult(data.message || 'Failed to save transaction');
         }
       } catch (error) {
         console.error('Error registering gold:', error);
         setRegistrationResult('Error registering gold');
       }
     }
-  };
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    registerGold();
   };
 
   return (
@@ -227,7 +218,7 @@ const RegisterGold = () => {
         <button type="submit">Register Gold</button>
       </form>
       {registrationResult && (
-        <div className="registration-result">
+        <div>
           <p>{registrationResult}</p>
           <p>Gold ID: {registeredGoldId}</p>
           <p>Transaction ID: {transactionId}</p>
