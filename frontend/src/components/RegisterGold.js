@@ -149,7 +149,7 @@ const RegisterGold = () => {
           type="text"
           value={goldType}
           onChange={(e) => setGoldType(e.target.value)}
-          placeholder="Gold Type (e.g., 24K)"
+          placeholder="Gold Type (e.g., Ring)"
         />
         <input
           type="text"
