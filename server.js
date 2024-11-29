@@ -6,7 +6,7 @@ const authRoutes = require('./routes/auth'); // Import auth routes
 const profileRoutes = require('./routes/profile');
 const getUserRoutes = require('./routes/getUser');
 const transactionRoutes = require('./routes/transaction'); // Import transaction routes
-
+const VerifyGoldRoutes = require('./routes/verifyGold'); // Import transaction routes
 dotenv.config();
 
 const app = express();
@@ -28,7 +28,7 @@ app.use(authRoutes);  // To directly access the login and register
 app.use('/profile', profileRoutes);
 app.use('/user', getUserRoutes);
 app.use('/transaction', transactionRoutes); // Prefix for transaction routes
-
+app.use('/verifygold', VerifyGoldRoutes);
 // Start the server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
