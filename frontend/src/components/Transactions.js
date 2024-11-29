@@ -53,21 +53,25 @@ function Transactions() {
       <h1>Transactions</h1>
       {error && <p className="error">{error}</p>}
       <div className="transactions-list">
-        {transactions.map((transaction, index) => (
-          <div
-            key={transaction._id}
-            className="transaction"
-            ref={transactions.length === index + 1 ? lastTransactionElementRef : null}
-          >
-            <p><strong>Gold ID:</strong> {transaction.goldId}</p>
-            <p><strong>Transaction Type:</strong> {transaction.transactionType}</p>
-            <p><strong>Transaction Time:</strong> {new Date(transaction.transactionTime).toLocaleString()}</p>
-            <p><strong>Transaction Hash:</strong> {transaction.transactionHash}</p>
-            {transaction.recipientPublicKey && (
-              <p><strong>Recipient Public Key:</strong> {transaction.recipientPublicKey}</p>
-            )}
-          </div>
-        ))}
+        {transactions.length === 0 ? (
+          <p>You have not started a transaction. Start a transaction and they will appear here.</p>
+        ) : (
+          transactions.map((transaction, index) => (
+            <div
+              key={transaction._id}
+              className="transaction"
+              ref={transactions.length === index + 1 ? lastTransactionElementRef : null}
+            >
+              <p><strong>Gold ID:</strong> {transaction.goldId}</p>
+              <p><strong>Transaction Type:</strong> {transaction.transactionType}</p>
+              <p><strong>Transaction Time:</strong> {new Date(transaction.transactionTime).toLocaleString()}</p>
+              <p><strong>Transaction Hash:</strong> {transaction.transactionHash}</p>
+              {transaction.recipientPublicKey && (
+                <p><strong>Recipient Public Key:</strong> {transaction.recipientPublicKey}</p>
+              )}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
