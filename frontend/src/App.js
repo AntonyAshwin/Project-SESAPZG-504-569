@@ -7,6 +7,7 @@ import Profile from './components/Profile';
 import Home from './components/Home';
 import Transactions from './components/Transactions';
 import RegisterGold from './components/RegisterGold';
+import TransferGold from './components/TransferGold'; // Import the TransferGold component
 import { FaSun, FaMoon } from 'react-icons/fa';
 
 function App() {
@@ -81,6 +82,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/register-gold" element={<RegisterGold />} />
+        <Route path="/transfer-gold" element={<TransferGold />} />
         <Route path="/" element={<Home />} />
       </Routes>
     </div>
