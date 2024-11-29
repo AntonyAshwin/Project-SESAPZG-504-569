@@ -165,8 +165,14 @@ const RegisterGold = () => {
             type="number"
             id="purity"
             value={purity}
-            onChange={(e) => setPurity(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 2) {
+                setPurity(value);
+              }
+            }}
             placeholder="Purity (%)"
+            maxLength="2"
           />
         </div>
         <div className="form-group">
