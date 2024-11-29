@@ -53,6 +53,23 @@ router.post('/', authMiddleware, async (req, res) => {
         });
 
         await newTransaction.save();
+
+        // Update the user's goldAssets array
+        if (transactionType === 'register') {
+            user.goldAssets.push(goldId);
+            await user.save();
+        } else if (transactionType === 'transfer') {
+            // Remove goldId from the current user's goldAssets array using $pull
+            await User.updateOne({ _id: userId }, { $pull: { goldAssets: goldId } });
+
+            // Find the recipient user by public key and add the goldId to their goldAssets array
+            const recipientUser = await User.findOne({ publicKey: recipientPublicKey });
+            if (recipientUser) {
+                recipientUser.goldAssets.push(goldId);
+                await recipientUser.save();
+            }
+        }
+
         res.status(201).json(newTransaction);
     } catch (error) {
         if (error.code === 11000) {
