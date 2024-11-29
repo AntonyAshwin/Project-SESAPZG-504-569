@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
 import './TransferGold.css'; // Import the CSS file
 import contractAddress from '../contractAddress'; // Import the contract address
 
-const TransferOwnership = () => {
+const TransferGold = () => {
   const [goldId, setGoldId] = useState('');
   const [newOwner, setNewOwner] = useState('');
   const [transferResult, setTransferResult] = useState('');
@@ -28,7 +28,7 @@ const TransferOwnership = () => {
     }
   }, []);
 
-  const transferOwnership = async () => {
+  const transferGold = async () => {
     if (contract && accounts.length > 0) {
       try {
         const receipt = await contract.methods.transferOwnership(goldId, newOwner).send({ from: accounts[0] });
@@ -110,7 +110,7 @@ const TransferOwnership = () => {
   return (
     <div className="transfer-gold-container">
       <h2>Transfer Ownership</h2>
-  <form onSubmit={(e) => { e.preventDefault(); transferOwnership(); }} className="transfer-gold-form">
+  <form onSubmit={(e) => { e.preventDefault(); transferGold(); }} className="transfer-gold-form">
         <div className="form-group">
           <label htmlFor="goldId">Gold ID:</label>
           <input
