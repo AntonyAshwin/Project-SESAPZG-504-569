@@ -9,10 +9,10 @@ contract GoldVerification {
         uint8 purity; // in percentage, 0 - 100
         address currentOwner;
         address initialOwner; // Address of the first registrant
-        bytes10 shopId; // PAN string
+        bytes15 shopId; // PAN string
         uint256 registrationDate;
         bytes3 goldType; // Type of gold (e.g., 24K, 22K)
-        bytes6 bisHallmark; // BIS Hallmark, 6-digit alphanumeric code
+        bytes1 bisHallmark; // BIS Hallmark, 1-byte alphanumeric code
         // Array to hold ownership transfer details
         TransferRecord[] transferHistory;
     }
@@ -31,16 +31,16 @@ contract GoldVerification {
     uint256 public goldCounter;
 
     // Events
-    event GoldRegistered(uint256 goldId, address indexed owner, bytes10 shopId);
+    event GoldRegistered(uint256 goldId, address indexed owner, bytes15 shopId);
     event GoldTransferred(uint256 goldId, address indexed from, address indexed to);
 
     // Function to register a new gold asset
     function registerGold(
         uint16 weight,
         uint8 purity,
-        bytes10 shopId,
+        bytes15 shopId,
         bytes3 goldType,
-        bytes6 bisHallmark
+        bytes1 bisHallmark
     ) public {
         // Generate a unique ID for the gold asset
         uint256 goldId = uint256(keccak256(abi.encodePacked(block.timestamp, goldCounter, shopId)));
@@ -63,27 +63,21 @@ contract GoldVerification {
     }
 
     // Function to transfer ownership of a gold asset
-    function transferOwnership(uint256 goldId, address newOwner) public onlyOwner(goldId) {
-        require(newOwner != address(0), "Invalid new owner");
-
-        // Update ownership
-        address previousOwner = goldAssets[goldId].currentOwner;
-        goldAssets[goldId].currentOwner = newOwner;
-
-        // Record the transfer
-        goldAssets[goldId].transferHistory.push(TransferRecord({
-            from: previousOwner,
+    function transferOwnership(uint256 goldId, address newOwner) public {
+        GoldAsset storage gold = goldAssets[goldId];
+        require(msg.sender == gold.currentOwner, "Only the current owner can transfer ownership");
+        gold.transferHistory.push(TransferRecord({
+            from: gold.currentOwner,
             to: newOwner,
             date: block.timestamp
         }));
-
-        // Emit the event
-        emit GoldTransferred(goldId, previousOwner, newOwner);
+        gold.currentOwner = newOwner;
+        emit GoldTransferred(goldId, msg.sender, newOwner);
     }
 
     // Function to get the details of a gold asset
     function getGoldDetails(uint256 goldId) public view returns (
-        uint256, uint16, uint8, address, address, bytes10, uint256, bytes3, bytes6
+        uint256, uint16, uint8, address, address, bytes15, uint256, bytes3, bytes1
     ) {
         GoldAsset storage gold = goldAssets[goldId];
         return (

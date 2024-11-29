@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
+import contractAddress from '../contractAddress'; // Import the contract address
+
 const RegisterGold = () => {
   const [weight, setWeight] = useState('');
   const [purity, setPurity] = useState('');
@@ -13,7 +15,6 @@ const RegisterGold = () => {
   const [web3, setWeb3] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [contract, setContract] = useState(null);
-  const contractAddress = '0x4612565ab51CA13b2d8f7E7426711Ad2777a1a2C';
 
   useEffect(() => {
     if (window.ethereum) {
@@ -29,7 +30,7 @@ const RegisterGold = () => {
     } else {
       console.error('MetaMask is not installed');
     }
-  }, [contractAddress]);
+  }, []);
 
   const validateInputs = () => {
     if (weight < 0 || weight > 99999) {
@@ -40,16 +41,16 @@ const RegisterGold = () => {
       setRegistrationResult('Purity must be between 0 and 100 percent');
       return false;
     }
-    if (shopId.length > 10) {
-      setRegistrationResult('Shop ID must be a maximum of 10 characters');
+    if (shopId.length > 15) {
+      setRegistrationResult('Shop ID must be a maximum of 15 characters');
       return false;
     }
     if (goldType.length > 3) {
       setRegistrationResult('Gold Type must be a maximum of 3 characters');
       return false;
     }
-    if (bisHallmark.length > 6) {
-      setRegistrationResult('BIS Hallmark must be a maximum of 6 characters');
+    if (bisHallmark.length > 1) {
+      setRegistrationResult('BIS Hallmark must be a maximum of 1 characters');
       return false;
     }
     return true;
