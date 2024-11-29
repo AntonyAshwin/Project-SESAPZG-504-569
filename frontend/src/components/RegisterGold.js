@@ -3,6 +3,8 @@ import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
 import contractAddress from '../contractAddress'; // Import the contract address
 import './RegisterGold.css'; // Import the CSS file
+import jewelryEnum from '../localResources/jewelryEnum'; // Import the jewelryEnum dictionary
+import bis from '../localResources/BisHallMark'; // Import the BisHallMark dictionary
 
 const RegisterGold = () => {
   const [weight, setWeight] = useState('');
@@ -33,19 +35,47 @@ const RegisterGold = () => {
     } else {
       console.error('Ethereum wallet not detected');
     }
+
+    // Fetch GSTIN from the backend
+    const fetchGstin = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setRegistrationResult('No token found. Please log in.');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:8080/profile', {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token,
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setShopId(data.gstin);
+        } else {
+          setRegistrationResult(data.message || 'Failed to fetch GSTIN');
+        }
+      } catch (err) {
+        setRegistrationResult('An error occurred. Please try again.');
+      }
+    };
+
+    fetchGstin();
   }, []);
 
   const validateInputs = () => {
-    if (shopId.length > 15) {
-      setRegistrationResult('Shop ID must be a maximum of 15 characters');
+    if (weight < 0 || weight > 99999) {
+      setRegistrationResult('Weight must be between 0 and 99999 grams');
       return false;
     }
-    if (goldType.length > 3) {
-      setRegistrationResult('Gold Type must be a maximum of 3 characters');
+    if (purity < 0 || purity > 100) {
+      setRegistrationResult('Purity must be between 0 and 100 percent');
       return false;
     }
-    if (bisHallmark.length > 1) {
-      setRegistrationResult('BIS Hallmark must be a maximum of 1 character');
+    if (!bisHallmark) {
+      setRegistrationResult('Please select a BIS Hallmark');
       return false;
     }
     return true;
@@ -65,9 +95,9 @@ const RegisterGold = () => {
         const receipt = await contract.methods.registerGold(
           parseInt(weight),
           parseInt(purity),
-          convertToHex(shopId),
-          convertToHex(goldType),
-          convertToHex(bisHallmark)
+          convertToHex(shopId), // Use GSTIN as shopId
+          convertToHex(jewelryEnum[goldType]), // Use the value from jewelryEnum
+          convertToHex(bis[bisHallmark]) // Use the value from BisHallMark
         ).send({ from: accounts[0] });
 
         const event = receipt.events.GoldRegistered;
@@ -126,63 +156,75 @@ const RegisterGold = () => {
 
   return (
     <div className="register-gold-container">
-      <h3>Register Gold</h3>
-      {registrationResult && <p className="success-message">{registrationResult}</p>}
-      <form onSubmit={handleRegister} className="register-gold-form">
+      <h2>Register Gold</h2>
+      <form onSubmit={(e) => { e.preventDefault(); registerGold(); }}>
         <div className="form-group">
-          <label htmlFor="weight">Weight (in grams):</label>
+          <label htmlFor="weight">Weight (grams)</label>
           <input
             type="number"
             id="weight"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
-            required
+            placeholder="Weight (grams)"
           />
         </div>
         <div className="form-group">
-          <label htmlFor="purity">Purity (%):</label>
+          <label htmlFor="purity">Purity (%)</label>
           <input
             type="number"
             id="purity"
             value={purity}
-            onChange={(e) => setPurity(e.target.value)}
-            required
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length <= 2) {
+                setPurity(value);
+              }
+            }}
+            placeholder="Purity (%)"
+            maxLength="2"
           />
         </div>
         <div className="form-group">
-          <label htmlFor="shopId">Shop ID (PAN):</label>
+          <label htmlFor="shopId">Shop ID (GSTIN)</label>
           <input
             type="text"
             id="shopId"
             value={shopId}
-            onChange={(e) => setShopId(e.target.value)}
-            placeholder="Shop ID (PAN)"
-            required
+            readOnly
+            placeholder="Shop ID (GSTIN)"
           />
         </div>
         <div className="form-group">
-          <label htmlFor="goldType">Gold Type (e.g., Ring):</label>
-          <input
-            type="text"
+          <label htmlFor="goldType">Gold Type</label>
+          <select
             id="goldType"
             value={goldType}
             onChange={(e) => setGoldType(e.target.value)}
-            placeholder="Gold Type (e.g., Ring)"
-            required
-          />
+          >
+            <option value="">Select Gold Type</option>
+            {Object.keys(jewelryEnum).map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="form-group">
-          <label htmlFor="bisHallmark">BIS Hallmark:</label>
-          <input
-            type="text"
+          <label htmlFor="bisHallmark">BIS Hallmark</label>
+          <select
             id="bisHallmark"
             value={bisHallmark}
             onChange={(e) => setBisHallmark(e.target.value)}
-            placeholder="BIS Hallmark"
-            required
-          />
+          >
+            <option value="">Select BIS Hallmark</option>
+            {Object.keys(bis).map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
         </div>
-        <button type="submit" className="button">Register Gold</button>
+        <button type="submit">Register Gold</button>
       </form>
       {registrationResult && (
         <div className="registration-result">
