@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
-import GoldVerificationABI from '/Users/I528714/3rdsem/Project-SESAPZG-504-569/frontend/src/build/contracts/GoldVerification.json';
-
+import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
 const RegisterGold = () => {
   const [weight, setWeight] = useState('');
   const [purity, setPurity] = useState('');
