@@ -3,6 +3,7 @@ import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
 import contractAddress from '../contractAddress'; // Import the contract address
 import jewelryEnum from '../localResources/jewelryEnum'; // Import the jewelryEnum dictionary
+import bis from '../localResources/BisHallMark'; // Import the BisHallMark dictionary
 
 const RegisterGold = () => {
   const [weight, setWeight] = useState('');
@@ -70,8 +71,8 @@ const RegisterGold = () => {
       setRegistrationResult('Purity must be between 0 and 100 percent');
       return false;
     }
-    if (bisHallmark.length > 1) {
-      setRegistrationResult('BIS Hallmark must be a maximum of 1 character');
+    if (!bisHallmark) {
+      setRegistrationResult('Please select a BIS Hallmark');
       return false;
     }
     return true;
@@ -93,7 +94,7 @@ const RegisterGold = () => {
           parseInt(purity),
           convertToHex(shopId), // Use GSTIN as shopId
           convertToHex(jewelryEnum[goldType]), // Use the value from jewelryEnum
-          convertToHex(bisHallmark)
+          convertToHex(bis[bisHallmark]) // Use the value from BisHallMark
         ).send({ from: accounts[0] });
 
         console.log('Transaction receipt:', receipt);
@@ -195,13 +196,18 @@ const RegisterGold = () => {
         </div>
         <div className="form-group">
           <label htmlFor="bisHallmark">BIS Hallmark</label>
-          <input
-            type="text"
+          <select
             id="bisHallmark"
             value={bisHallmark}
             onChange={(e) => setBisHallmark(e.target.value)}
-            placeholder="BIS Hallmark"
-          />
+          >
+            <option value="">Select BIS Hallmark</option>
+            {Object.keys(bis).map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
         </div>
         <button type="submit">Register Gold</button>
       </form>
