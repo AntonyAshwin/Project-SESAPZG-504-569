@@ -48,29 +48,53 @@ function Transactions() {
     if (node) observer.current.observe(node);
   }, [hasMore]);
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return new Date(dateString).toLocaleDateString('en-GB', options); // Use 'en-GB' for dd/mm/yyyy format
+  };
+
+  const formatTime = (dateString) => {
+    const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+    return new Date(dateString).toLocaleTimeString(undefined, options);
+  };
+
   return (
     <div className="transactions-page">
       <h1>Transactions</h1>
       {error && <p className="error">{error}</p>}
+      <table className="transactions-header">
+        <thead>
+          <tr>
+            <th>Gold ID</th>
+            <th>Transaction Type</th>
+            <th>Transaction Date</th>
+            <th>Transaction Time</th>
+            <th>Transaction Hash</th>
+            <th>Recipient Public Key</th>
+          </tr>
+        </thead>
+      </table>
       <div className="transactions-list">
         {transactions.length === 0 ? (
-          <p>You have not started a transaction. Start a transaction and they will appear here.</p>
+          <p>No transactions are present.</p>
         ) : (
-          transactions.map((transaction, index) => (
-            <div
-              key={transaction._id}
-              className="transaction"
-              ref={transactions.length === index + 1 ? lastTransactionElementRef : null}
-            >
-              <p><strong>Gold ID:</strong> {transaction.goldId}</p>
-              <p><strong>Transaction Type:</strong> {transaction.transactionType}</p>
-              <p><strong>Transaction Time:</strong> {new Date(transaction.transactionTime).toLocaleString()}</p>
-              <p><strong>Transaction Hash:</strong> {transaction.transactionHash}</p>
-              {transaction.recipientPublicKey && (
-                <p><strong>Recipient Public Key:</strong> {transaction.recipientPublicKey}</p>
-              )}
-            </div>
-          ))
+          <table>
+            <tbody>
+              {transactions.map((transaction, index) => (
+                <tr
+                  key={transaction._id}
+                  ref={transactions.length === index + 1 ? lastTransactionElementRef : null}
+                >
+                  <td>{transaction.goldId}</td>
+                  <td>{transaction.transactionType}</td>
+                  <td>{formatDate(transaction.transactionTime)}</td>
+                  <td>{formatTime(transaction.transactionTime)}</td>
+                  <td>{transaction.transactionHash}</td>
+                  <td>{transaction.recipientPublicKey || 'N/A'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>

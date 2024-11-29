@@ -1,6 +1,6 @@
 .transactions-page {
   padding: 20px;
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -14,13 +14,44 @@ h1 {
   text-align: center;
 }
 
+.transactions-header {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures the table does not exceed the container width */
+}
+
+.transactions-header th {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  background-color: #f2f2f2;
+}
+
 .transactions-list {
-  max-height: 400px;
-  overflow-y: scroll;
+  max-height: 60vh; /* Reduce the height to fit within the viewport */
+  overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
   background-color: #f9f9f9;
+  position: relative; /* Ensure the container is positioned */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures the table does not exceed the container width */
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  word-wrap: break-word; /* Ensures long text wraps within the cell */
+}
+
+th {
+  background-color: #f2f2f2;
 }
 
 .transaction {
@@ -34,4 +65,23 @@ h1 {
 
 .transaction p {
   margin: 5px 0;
+}
+
+/* Dark mode styles */
+body.dark-mode .transactions-header th {
+  background-color: #333;
+  color: #fff;
+}
+
+body.dark-mode .transactions-list {
+  background-color: #2e2e2e;
+  border: 1px solid #555;
+}
+
+body.dark-mode table {
+  color: #fff;
+}
+
+body.dark-mode th, body.dark-mode td {
+  border: 1px solid #555;
 }
