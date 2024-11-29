@@ -1,73 +1,84 @@
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #f0f4f8;
-  color: #333;
+  background-color: var(--background-color);
+  color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
 }
 
 body.dark-mode {
-  background-color: #1e1e1e;
-  color: #e0e0e0;
+  --background-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --sidebar-background-color: #2c2c2c;
+  --link-color: #90caf9;
+  --link-hover-color: #64b5f6;
+  --box-shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+body.light-mode {
+  --background-color: #f0f4f8;
+  --text-color: #333;
+  --sidebar-background-color: #ffffff;
+  --link-color: #2196f3;
+  --link-hover-color: #1976d2;
+  --box-shadow-color: rgba(0, 0, 0, 0.1);
 }
 
 .home-container {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
   padding: 20px;
   box-sizing: border-box;
+  padding-top: 60px; /* Add padding to avoid content being hidden behind the fixed header */
 }
 
-.welcome-section {
-  max-width: 600px;
-  text-align: center;
+.sidebar {
+  width: 250px;
+  background-color: var(--sidebar-background-color);
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  box-shadow: 0 4px 8px var(--box-shadow-color);
+  position: fixed;
+  top: 60px; /* Adjust based on the height of your header */
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
 }
 
-.welcome-section h1 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
 }
 
-.welcome-section p {
-  font-size: 1.2em;
-  margin-bottom: 30px;
+.sidebar ul li {
+  margin-bottom: 10px;
 }
 
-.cta-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.button {
-  background-color: #2196f3;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
+.sidebar ul li a {
+  color: var(--link-color);
   text-decoration: none;
-  font-size: 1em;
-  transition: background-color 0.3s;
-  cursor: pointer;
+  font-weight: bold;
+  display: block;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
-.button:hover {
-  background-color: #1976d2;
+.sidebar ul li a:hover {
+  background-color: var(--link-hover-color);
 }
 
-.user-section {
-  max-width: 600px;
-  text-align: center;
+.main-content {
+  margin-left: 270px; /* Adjust based on the width of your sidebar */
+  padding: 20px;
+  flex: 1;
 }
 
-.user-section h1 {
+.main-content h1 {
   font-size: 2.5em;
   margin-bottom: 20px;
 }
 
-.user-section p {
+.main-content p {
   font-size: 1.2em;
-  margin-bottom: 30px;
+  line-height: 1.6;
 }

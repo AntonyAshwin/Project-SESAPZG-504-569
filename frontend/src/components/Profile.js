@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css';
+import LoadingSpinner from './LoadingSpinner';
 
 function Profile() {
   const [profile, setProfile] = useState(null);
@@ -50,8 +51,7 @@ function Profile() {
   }
 
   if (!profile) {
-    return <p>Loading...</p>;
-  }
+    return <LoadingSpinner />;  }
 
   return (
     <div className="container fade-in">

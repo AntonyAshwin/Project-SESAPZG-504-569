@@ -59,12 +59,6 @@ function App() {
                 <Link to="/profile">Profile</Link>
               </li>
               <li>
-                <Link to="/transactions">Transactions</Link>
-              </li>
-              <li>
-                <Link to="/register-gold">Register Gold</Link>
-              </li>
-              <li>
                 <button onClick={handleSignOut}>Sign Out</button>
               </li>
             </>

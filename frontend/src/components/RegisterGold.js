@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
 import contractAddress from '../contractAddress'; // Import the contract address
+import './RegisterGold.css'; // Import the CSS file
 
 const RegisterGold = () => {
   const [weight, setWeight] = useState('');
@@ -26,21 +27,15 @@ const RegisterGold = () => {
           const contractInstance = new web3Instance.eth.Contract(GoldVerificationABI.abi, contractAddress);
           setContract(contractInstance);
         })
-        .catch(err => console.error(err));
+        .catch(error => {
+          console.error('Error fetching accounts:', error);
+        });
     } else {
-      console.error('MetaMask is not installed');
+      console.error('Ethereum wallet not detected');
     }
   }, []);
 
   const validateInputs = () => {
-    if (weight < 0 || weight > 99999) {
-      setRegistrationResult('Weight must be between 0 and 99999 grams');
-      return false;
-    }
-    if (purity < 0 || purity > 100) {
-      setRegistrationResult('Purity must be between 0 and 100 percent');
-      return false;
-    }
     if (shopId.length > 15) {
       setRegistrationResult('Shop ID must be a maximum of 15 characters');
       return false;
@@ -50,7 +45,7 @@ const RegisterGold = () => {
       return false;
     }
     if (bisHallmark.length > 1) {
-      setRegistrationResult('BIS Hallmark must be a maximum of 1 characters');
+      setRegistrationResult('BIS Hallmark must be a maximum of 1 character');
       return false;
     }
     return true;
@@ -75,10 +70,7 @@ const RegisterGold = () => {
           convertToHex(bisHallmark)
         ).send({ from: accounts[0] });
 
-        console.log('Transaction receipt:', receipt);
         const event = receipt.events.GoldRegistered;
-        console.log('GoldRegistered event:', event);
-
         const goldId = event.returnValues.goldId.toString();
         const transactionHash = receipt.transactionHash;
 
@@ -107,14 +99,18 @@ const RegisterGold = () => {
           body: JSON.stringify({
             userId,
             goldId,
-            transactionType: 'register',
             transactionHash,
+            weight,
+            purity,
+            shopId,
+            goldType,
+            bisHallmark
           }),
         });
 
+        const responseData = await response.json();
         if (!response.ok) {
-          const data = await response.json();
-          setRegistrationResult(data.message || 'Failed to save transaction');
+          setRegistrationResult(`Error: ${responseData.message}`);
         }
       } catch (error) {
         console.error('Error registering gold:', error);
@@ -123,44 +119,73 @@ const RegisterGold = () => {
     }
   };
 
+  const handleRegister = (e) => {
+    e.preventDefault();
+    registerGold();
+  };
+
   return (
-    <div>
-      <h2>Register Gold</h2>
-      <form onSubmit={(e) => { e.preventDefault(); registerGold(); }}>
-        <input
-          type="number"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          placeholder="Weight (grams)"
-        />
-        <input
-          type="number"
-          value={purity}
-          onChange={(e) => setPurity(e.target.value)}
-          placeholder="Purity (%)"
-        />
-        <input
-          type="text"
-          value={shopId}
-          onChange={(e) => setShopId(e.target.value)}
-          placeholder="Shop ID (PAN)"
-        />
-        <input
-          type="text"
-          value={goldType}
-          onChange={(e) => setGoldType(e.target.value)}
-          placeholder="Gold Type (e.g., Ring)"
-        />
-        <input
-          type="text"
-          value={bisHallmark}
-          onChange={(e) => setBisHallmark(e.target.value)}
-          placeholder="BIS Hallmark"
-        />
-        <button type="submit">Register Gold</button>
+    <div className="register-gold-container">
+      <h3>Register Gold</h3>
+      {registrationResult && <p className="success-message">{registrationResult}</p>}
+      <form onSubmit={handleRegister} className="register-gold-form">
+        <div className="form-group">
+          <label htmlFor="weight">Weight (in grams):</label>
+          <input
+            type="number"
+            id="weight"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="purity">Purity (%):</label>
+          <input
+            type="number"
+            id="purity"
+            value={purity}
+            onChange={(e) => setPurity(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="shopId">Shop ID (PAN):</label>
+          <input
+            type="text"
+            id="shopId"
+            value={shopId}
+            onChange={(e) => setShopId(e.target.value)}
+            placeholder="Shop ID (PAN)"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="goldType">Gold Type (e.g., Ring):</label>
+          <input
+            type="text"
+            id="goldType"
+            value={goldType}
+            onChange={(e) => setGoldType(e.target.value)}
+            placeholder="Gold Type (e.g., Ring)"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="bisHallmark">BIS Hallmark:</label>
+          <input
+            type="text"
+            id="bisHallmark"
+            value={bisHallmark}
+            onChange={(e) => setBisHallmark(e.target.value)}
+            placeholder="BIS Hallmark"
+            required
+          />
+        </div>
+        <button type="submit" className="button">Register Gold</button>
       </form>
       {registrationResult && (
-        <div>
+        <div className="registration-result">
           <p>{registrationResult}</p>
           <p>Gold ID: {registeredGoldId}</p>
           <p>Transaction ID: {transactionId}</p>

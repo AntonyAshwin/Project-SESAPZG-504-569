@@ -1,62 +1,98 @@
-.transactions-page {
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+  --background-color: #1e1e1e;
+  --text-color: #e0e0e0;
+  --table-header-background-color: #333;
+  --table-header-text-color: #fff;
+  --table-row-background-color: #2e2e2e;
+  --table-row-border-color: #555;
+}
+
+body.light-mode {
+  --background-color: #f0f4f8;
+  --text-color: #333;
+  --table-header-background-color: #f5f5f5;
+  --table-header-text-color: #333;
+  --table-row-background-color: #fff;
+  --table-row-border-color: #ddd;
+}
+
+.transactions-container {
+  max-width: 800px;
+  margin: 50px auto;
   padding: 20px;
-  max-width: 100%;
-  margin: 0 auto;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  animation: fadeIn 1s ease-in-out;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.error {
-  color: red;
-  text-align: center;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .transactions-header {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed; /* Ensures the table does not exceed the container width */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  animation: slideIn 1s ease-in-out;
 }
 
-.transactions-header th {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: left;
-  background-color: #f2f2f2;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.transactions-header h2 {
+  margin: 0;
 }
 
 .transactions-list {
-  max-height: 60vh; /* Reduce the height to fit within the viewport */
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #f9f9f9;
-  position: relative; /* Ensure the container is positioned */
-}
-
-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Ensures the table does not exceed the container width */
+  animation: fadeIn 1s ease-in-out;
 }
 
-th, td {
+.transactions-list th {
+  background-color: var(--table-header-background-color);
+  color: var(--table-header-text-color);
   padding: 10px;
-  border: 1px solid #ddd;
   text-align: left;
-  word-wrap: break-word; /* Ensures long text wraps within the cell */
 }
 
-th {
-  background-color: #f2f2f2;
+.transactions-list td {
+  background-color: var(--table-row-background-color);
+  border-bottom: 1px solid var(--table-row-border-color);
+  padding: 10px;
+}
+
+.transactions-list tr:hover {
+  background-color: var(--table-header-background-color);
 }
 
 .transaction {
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--table-row-border-color);
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .transaction:last-child {
@@ -69,27 +105,17 @@ th {
 
 /* Dark mode styles */
 body.dark-mode .transactions-header th {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--table-header-background-color);
+  color: var(--table-header-text-color);
 }
 
 body.dark-mode .transactions-list {
-  background-color: #2e2e2e;
-  border: 1px solid #555;
+  background-color: var(--table-row-background-color);
+  border: 1px solid var(--table-row-border-color);
 }
 
-body.dark-mode table {
-  color: #fff;
-}
-
-body.dark-mode th, body.dark-mode td {
-  border: 1px solid #555;
-}
-
-.success {
-  background-color: rgb(193, 243, 193);
-}
-
-.failure {
-  background-color: rgb(243, 192, 192);
+.no-transactions {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-color);
 }
