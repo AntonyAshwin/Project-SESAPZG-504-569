@@ -6,6 +6,9 @@ function Transactions() {
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [orderBy, setOrderBy] = useState('transactionTime');
+  const [direction, setDirection] = useState('desc');
+  const [filterBy, setFilterBy] = useState('');
   const observer = useRef();
 
   const fetchTransactions = async (page) => {
@@ -15,7 +18,7 @@ function Transactions() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/transaction?page=${page}`, {
+      const response = await fetch(`http://localhost:8080/transaction?page=${page}&orderBy=${orderBy}&direction=${direction}&filterBy=${filterBy}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -24,7 +27,11 @@ function Transactions() {
       });
       const data = await response.json();
       if (response.ok) {
-        setTransactions((prevTransactions) => [...prevTransactions, ...data.transactions]);
+        if (page === 1) {
+          setTransactions(data.transactions);
+        } else {
+          setTransactions((prevTransactions) => [...prevTransactions, ...data.transactions]);
+        }
         setHasMore(page < data.pagination.totalPages);
       } else {
         setError(data.message || 'Failed to fetch transactions');
@@ -33,6 +40,11 @@ function Transactions() {
       setError('An error occurred. Please try again.');
     }
   };
+
+  useEffect(() => {
+    setPage(1);
+    fetchTransactions(1);
+  }, [orderBy, direction, filterBy]);
 
   useEffect(() => {
     fetchTransactions(page);
@@ -62,6 +74,31 @@ function Transactions() {
     <div className="transactions-page">
       <h1>Transactions</h1>
       {error && <p className="error">{error}</p>}
+      <div className="filters">
+        <label>
+          Order By:
+          <select value={orderBy} onChange={(e) => setOrderBy(e.target.value)}>
+            <option value="transactionTime">Transaction Time</option>
+            <option value="goldId">Gold ID</option>
+            <option value="transactionType">Transaction Type</option>
+          </select>
+        </label>
+        <label>
+          Direction:
+          <select value={direction} onChange={(e) => setDirection(e.target.value)}>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </label>
+        <label>
+          Filter By:
+          <select value={filterBy} onChange={(e) => setFilterBy(e.target.value)}>
+            <option value="">All</option>
+            <option value="register">Register</option>
+            <option value="transfer">Transfer</option>
+          </select>
+        </label>
+      </div>
       <table className="transactions-header">
         <thead>
           <tr>

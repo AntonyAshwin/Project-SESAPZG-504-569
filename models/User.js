@@ -70,6 +70,10 @@ const UserSchema = new mongoose.Schema({
             return this.role === 'seller';
         },
     },
+    goldAssets: {
+        type: [String], // Change to array of strings
+        default: [],
+    },
 });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -9,6 +9,7 @@ import Transactions from './components/Transactions';
 import RegisterGold from './components/RegisterGold';
 import TransferGold from './components/TransferGold';
 import VerifyGold from './components/VerifyGold'; // Import the new component
+import ViewAssets from './components/ViewAssets'; // Import the new component
 import { FaSun, FaMoon } from 'react-icons/fa';
 
 function App() {
@@ -63,6 +64,9 @@ function App() {
                 <Link to="/verify-gold">Verify Gold</Link> 
               </li>
               <li>
+                <Link to="/view-assets">View Assets</Link> {/* Add this line */}
+              </li>
+              <li>
                 <button onClick={handleSignOut}>Sign Out</button>
               </li>
             </>
@@ -81,7 +85,8 @@ function App() {
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/register-gold" element={<RegisterGold />} />
         <Route path="/transfer-gold" element={<TransferGold />} />
-        <Route path="/verify-gold" element={<VerifyGold />} />
+        <Route path="/verify-gold" element={<VerifyGold />} /> {/* New Route */}
+        <Route path="/view-assets" element={<ViewAssets />} /> {/* Add this line */}
         <Route path="/" element={<Home />} />
       </Routes>
     </div>
