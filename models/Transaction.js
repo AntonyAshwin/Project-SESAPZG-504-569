@@ -30,6 +30,10 @@ const TransactionSchema = new mongoose.Schema({
         required: true,
         unique: true, // Ensure transactionHash is unique
     },
+    isSuccessful: {
+        type: Boolean,
+        default: true, // Default to true if not specified
+    },
 });
 
 TransactionSchema.index({ transactionHash: 1 }, { unique: true });

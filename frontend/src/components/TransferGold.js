@@ -30,11 +30,76 @@ const TransferOwnership = () => {
   const transferOwnership = async () => {
     if (contract && accounts.length > 0) {
       try {
-        await contract.methods.transferOwnership(goldId, newOwner).send({ from: accounts[0] });
+        const receipt = await contract.methods.transferOwnership(goldId, newOwner).send({ from: accounts[0] });
         setTransferResult('Ownership transferred successfully');
+
+        const event = receipt.events.GoldTransferred;
+        const transactionHash = receipt.transactionHash;
+        const goldIdFromEvent = event.returnValues.goldId;
+
+        // Get the JWT token from localStorage
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setTransferResult('No token found. Please log in.');
+          return;
+        }
+
+        // Decode the JWT token to get the userId
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        const userId = decodedToken.id;
+
+        // Send the transaction data to the backend
+        const response = await fetch('http://localhost:8080/transaction', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token,
+          },
+          body: JSON.stringify({
+            userId,
+            goldId: goldIdFromEvent,
+            transactionType: 'transfer',
+            transactionHash,
+            recipientPublicKey: newOwner,
+            isSuccessful: true,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          setTransferResult(data.message || 'Failed to save transaction');
+        }
       } catch (error) {
         console.error('Error transferring ownership:', error);
         setTransferResult('Error transferring ownership');
+
+        // Get the JWT token from localStorage
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setTransferResult('No token found. Please log in.');
+          return;
+        }
+
+        // Decode the JWT token to get the userId
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        const userId = decodedToken.id;
+
+        // Send the transaction data to the backend with isSuccessful as false
+        await fetch('http://localhost:8080/transaction', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token,
+          },
+          body: JSON.stringify({
+            userId,
+            goldId,
+            transactionType: 'transfer',
+            transactionHash: 'N/A',
+            recipientPublicKey: newOwner,
+            isSuccessful: false,
+          }),
+        });
       }
     }
   };
