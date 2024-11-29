@@ -62,9 +62,9 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// Route to get transactions with pagination and sorting
+// Route to get transactions with pagination, sorting, and filtering
 router.get('/', authMiddleware, async (req, res) => {
-    const { page = 1, limit = 10, orderBy = 'transactionTime', direction = 'desc' } = req.query;
+    const { page = 1, limit = 10, orderBy = 'transactionTime', direction = 'desc', filterBy } = req.query;
 
     try {
         // Extract user information from the JWT token
@@ -82,14 +82,20 @@ router.get('/', authMiddleware, async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        // Build the query object
+        const query = { userId };
+        if (filterBy && ['register', 'transfer'].includes(filterBy)) {
+            query.transactionType = filterBy;
+        }
+
         // Fetch paginated transactions for the user
-        const transactions = await Transaction.find({ userId })
+        const transactions = await Transaction.find(query)
             .sort({ [orderBy]: direction === 'asc' ? 1 : -1 }) // Sort by specified column and direction
             .skip((page - 1) * limit) // Skip documents for previous pages
             .limit(parseInt(limit)); // Limit the number of results to 'limit'
 
         // Fetch total count for pagination metadata
-        const totalTransactions = await Transaction.countDocuments({ userId });
+        const totalTransactions = await Transaction.countDocuments(query);
 
         // Return paginated results and metadata
         res.json({
