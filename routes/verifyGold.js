@@ -14,7 +14,6 @@ router.get('/:goldId', authMiddleware, async (req, res) => {
   const goldId = req.params.goldId;
 
   try {
- 
     const token = req.header('x-auth-token');
     if (!token) {
       return res.status(401).json({ message: 'No token, authorization denied' });
@@ -23,13 +22,16 @@ router.get('/:goldId', authMiddleware, async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
-
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     const gold = await contract.methods.getGoldDetails(goldId).call();
+
+    if (gold[1] === '0' || gold[2] === '0') {
+      return res.status(400).json({ message: 'Invalid gold details' });
+    }
 
     const goldDetails = {
       weight: gold[1],
