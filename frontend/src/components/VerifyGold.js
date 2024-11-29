@@ -45,7 +45,7 @@ const VerifyGold = () => {
         onChange={handleInputChange}
         placeholder="Enter Gold ID"
       />
-      <button onClick={handleVerifyGold} disabled={goldId.length !== 77}>
+      <button onClick={handleVerifyGold}>
         Verify Gold
       </button>
 
