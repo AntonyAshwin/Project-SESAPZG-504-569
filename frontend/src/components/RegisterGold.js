@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
 import contractAddress from '../contractAddress'; // Import the contract address
+import jewelryEnum from '../localResources/jewelryEnum'; // Import the jewelryEnum dictionary
 
 const RegisterGold = () => {
   const [weight, setWeight] = useState('');
@@ -69,10 +70,6 @@ const RegisterGold = () => {
       setRegistrationResult('Purity must be between 0 and 100 percent');
       return false;
     }
-    if (goldType.length > 3) {
-      setRegistrationResult('Gold Type must be a maximum of 3 characters');
-      return false;
-    }
     if (bisHallmark.length > 1) {
       setRegistrationResult('BIS Hallmark must be a maximum of 1 character');
       return false;
@@ -95,7 +92,7 @@ const RegisterGold = () => {
           parseInt(weight),
           parseInt(purity),
           convertToHex(shopId), // Use GSTIN as shopId
-          convertToHex(goldType),
+          convertToHex(jewelryEnum[goldType]), // Use the value from jewelryEnum
           convertToHex(bisHallmark)
         ).send({ from: accounts[0] });
 
@@ -151,36 +148,61 @@ const RegisterGold = () => {
     <div>
       <h2>Register Gold</h2>
       <form onSubmit={(e) => { e.preventDefault(); registerGold(); }}>
-        <input
-          type="number"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          placeholder="Weight (grams)"
-        />
-        <input
-          type="number"
-          value={purity}
-          onChange={(e) => setPurity(e.target.value)}
-          placeholder="Purity (%)"
-        />
-        <input
-          type="text"
-          value={shopId}
-          readOnly
-          placeholder="Shop ID (GSTIN)"
-        />
-        <input
-          type="text"
-          value={goldType}
-          onChange={(e) => setGoldType(e.target.value)}
-          placeholder="Gold Type (e.g., Ring)"
-        />
-        <input
-          type="text"
-          value={bisHallmark}
-          onChange={(e) => setBisHallmark(e.target.value)}
-          placeholder="BIS Hallmark"
-        />
+        <div className="form-group">
+          <label htmlFor="weight">Weight (grams)</label>
+          <input
+            type="number"
+            id="weight"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            placeholder="Weight (grams)"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="purity">Purity (%)</label>
+          <input
+            type="number"
+            id="purity"
+            value={purity}
+            onChange={(e) => setPurity(e.target.value)}
+            placeholder="Purity (%)"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="shopId">Shop ID (GSTIN)</label>
+          <input
+            type="text"
+            id="shopId"
+            value={shopId}
+            readOnly
+            placeholder="Shop ID (GSTIN)"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="goldType">Gold Type</label>
+          <select
+            id="goldType"
+            value={goldType}
+            onChange={(e) => setGoldType(e.target.value)}
+          >
+            <option value="">Select Gold Type</option>
+            {Object.keys(jewelryEnum).map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="bisHallmark">BIS Hallmark</label>
+          <input
+            type="text"
+            id="bisHallmark"
+            value={bisHallmark}
+            onChange={(e) => setBisHallmark(e.target.value)}
+            placeholder="BIS Hallmark"
+          />
+        </div>
         <button type="submit">Register Gold</button>
       </form>
       {registrationResult && (
