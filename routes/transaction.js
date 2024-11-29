@@ -62,8 +62,10 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// Route to get all transactions for the user
+// Route to get transactions with pagination and sorting
 router.get('/', authMiddleware, async (req, res) => {
+    const { page = 1, limit = 10, orderBy = 'transactionTime', direction = 'desc' } = req.query;
+
     try {
         // Extract user information from the JWT token
         const token = req.header('x-auth-token');
@@ -73,28 +75,29 @@ router.get('/', authMiddleware, async (req, res) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.id;
-        
-        // **Pagination logic** - Extract 'page' and 'limit' from query parameters
-        const page = parseInt(req.query.page) || 1; // Default to page 1
-        const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
-        const skip = (page - 1) * limit;
+
+        // Fetch user details to check the role
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         // Fetch paginated transactions for the user
         const transactions = await Transaction.find({ userId })
-            .sort({ transactionTime: -1 }) // Sort by most recent transaction
-            .skip(skip) // Skip documents for previous pages
-            .limit(limit); // Limit the number of results to 'limit'
+            .sort({ [orderBy]: direction === 'asc' ? 1 : -1 }) // Sort by specified column and direction
+            .skip((page - 1) * limit) // Skip documents for previous pages
+            .limit(parseInt(limit)); // Limit the number of results to 'limit'
 
         // Fetch total count for pagination metadata
         const totalTransactions = await Transaction.countDocuments({ userId });
 
-        // **Return paginated results and metadata**
+        // Return paginated results and metadata
         res.json({
             transactions,
             pagination: {
                 total: totalTransactions,
-                page,
-                limit,
+                page: parseInt(page),
+                limit: parseInt(limit),
                 totalPages: Math.ceil(totalTransactions / limit),
             },
         });
