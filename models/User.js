@@ -71,7 +71,7 @@ const UserSchema = new mongoose.Schema({
         },
     },
     goldAssets: {
-        type: [Number],
+        type: [String], // Change to array of strings
         default: [],
     },
 });
