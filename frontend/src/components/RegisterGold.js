@@ -30,6 +30,34 @@ const RegisterGold = () => {
     } else {
       console.error('MetaMask is not installed');
     }
+
+    // Fetch GSTIN from the backend
+    const fetchGstin = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setRegistrationResult('No token found. Please log in.');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:8080/profile', {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token,
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setShopId(data.gstin);
+        } else {
+          setRegistrationResult(data.message || 'Failed to fetch GSTIN');
+        }
+      } catch (err) {
+        setRegistrationResult('An error occurred. Please try again.');
+      }
+    };
+
+    fetchGstin();
   }, []);
 
   const validateInputs = () => {
@@ -41,16 +69,12 @@ const RegisterGold = () => {
       setRegistrationResult('Purity must be between 0 and 100 percent');
       return false;
     }
-    if (shopId.length > 15) {
-      setRegistrationResult('Shop ID must be a maximum of 15 characters');
-      return false;
-    }
     if (goldType.length > 3) {
       setRegistrationResult('Gold Type must be a maximum of 3 characters');
       return false;
     }
     if (bisHallmark.length > 1) {
-      setRegistrationResult('BIS Hallmark must be a maximum of 1 characters');
+      setRegistrationResult('BIS Hallmark must be a maximum of 1 character');
       return false;
     }
     return true;
@@ -70,7 +94,7 @@ const RegisterGold = () => {
         const receipt = await contract.methods.registerGold(
           parseInt(weight),
           parseInt(purity),
-          convertToHex(shopId),
+          convertToHex(shopId), // Use GSTIN as shopId
           convertToHex(goldType),
           convertToHex(bisHallmark)
         ).send({ from: accounts[0] });
@@ -142,8 +166,8 @@ const RegisterGold = () => {
         <input
           type="text"
           value={shopId}
-          onChange={(e) => setShopId(e.target.value)}
-          placeholder="Shop ID (PAN)"
+          readOnly
+          placeholder="Shop ID (GSTIN)"
         />
         <input
           type="text"
