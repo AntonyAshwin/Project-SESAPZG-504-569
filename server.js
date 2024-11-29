@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch(err => console.log(err));
 
 // Use routes
-app.use('/auth', authRoutes); // Prefix for auth routes
+app.use(authRoutes);  // To directly access the login and register
 app.use('/profile', profileRoutes);
 app.use('/user', getUserRoutes);
 app.use('/transaction', transactionRoutes); // Prefix for transaction routes
