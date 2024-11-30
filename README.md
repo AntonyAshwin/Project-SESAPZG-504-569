@@ -3,6 +3,8 @@
 Hi All, This is our combined final project assignment for the courses 24_SESAPZG504 and 24_SESAPZG569. Our team consists of 4 members, Anthony Ashiwin(2023sl93002), Abhishek Bantiya(2023sl93003), 
 Abani Kaur Kohli(2023sl93056), Suyash Triipathi(2023sl93048).
 
+SwaggerHub: https://app.swaggerhub.com/apis/KOHLIABANI_1/GoldTransactionVerification/1.0.0#/
+
 Project Introduction-
 Gold, as a valuable commodity, faces numerous challenges in ensuring its authenticity, ethical sourcing, and traceability. Traditional verification methods often lack transparency and are susceptible to fraud. Blockchain technology offers a transformative solution by creating a decentralized, immutable, and transparent system for gold provenance and verification.
 
