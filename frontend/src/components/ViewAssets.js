@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import './ViewAssets.css'; // Import the CSS file
 
 const ViewAssets = () => {
   const [goldAssets, setGoldAssets] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchGoldAssets = async () => {
+    // Fetch assets from the server
+    const fetchAssets = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('No token found. Please log in.');
+        setError('No token found');
         return;
       }
 
@@ -20,34 +22,26 @@ const ViewAssets = () => {
             'x-auth-token': token,
           },
         });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-
         const data = await response.json();
         setGoldAssets(data.goldAssets);
-      } catch (err) {
-        setError('An error occurred. Please try again.');
+      } catch (error) {
+        setError('Error fetching assets');
       }
     };
 
-    fetchGoldAssets();
+    fetchAssets();
   }, []);
 
   const copyToClipboard = (goldId) => {
-    navigator.clipboard.writeText(goldId).then(() => {
-      alert('Gold ID copied to clipboard');
-    }).catch(err => {
-      console.error('Failed to copy: ', err);
-    });
+    navigator.clipboard.writeText(goldId);
+    alert('Gold ID copied to clipboard');
   };
 
   return (
-    <div>
+    <div className="view-assets-container">
       <h2>View Assets</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <table>
+      {error && <p className="view-assets-error">{error}</p>}
+      <table className="view-assets-table">
         <thead>
           <tr>
             <th>Gold ID</th>
@@ -59,7 +53,7 @@ const ViewAssets = () => {
             <tr key={index}>
               <td>{goldId}</td>
               <td>
-                <button onClick={() => copyToClipboard(goldId)}>Copy</button>
+                <button className="view-assets-button" onClick={() => copyToClipboard(goldId)}>Copy</button>
               </td>
             </tr>
           ))}

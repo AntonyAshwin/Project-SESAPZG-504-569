@@ -1,34 +1,18 @@
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
+    background-color: #f0f4f8; /* Light mode background color */
+    color: #333; /* Light mode text color */
     transition: background-color 0.3s, color 0.3s;
   }
   
   body.dark-mode {
-    --background-color: #1e1e1e;
-    --text-color: #e0e0e0;
-    --input-background-color: #2c2c2c;
-    --input-border-color: #444;
-    --button-background-color: #007bff; /* More blue color */
-    --button-hover-background-color: #0056b3;
-    --button-text-color: #e0e0e0; /* Ensure button text color is light in dark mode */
-    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --input-outline: none;
-    --button-outline: none;
+    background-color: #1e1e1e; /* Dark mode background color */
+    color: #e0e0e0; /* Dark mode text color */
   }
   
   body.light-mode {
-    --background-color: #f0f4f8;
-    --text-color: #333;
-    --input-background-color: #fff;
-    --input-border-color: #ddd;
-    --button-background-color: #007bff; /* More blue color */
-    --button-hover-background-color: #0056b3;
-    --button-text-color: #fff; /* Ensure button text color is dark in light mode */
-    --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More box shadow in light mode */
-    --input-outline: 1px solid #000; /* Black outline for input in light mode */
-    --button-outline: 1px solid #000; /* Black outline for button in light mode */
+    background-color: #f0f4f8; /* Light mode background color */
+    color: #333; /* Light mode text color */
   }
   
   .verify-gold-page {
@@ -44,14 +28,23 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background-color: var(--container-background-color);
+    background-color: #fff; /* Light mode container background color */
+    color: #333; /* Light mode container text color */
     border-radius: 8px;
-    box-shadow: var(--box-shadow);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Light mode box shadow */
     max-width: 400px;
     width: 100%;
     box-sizing: border-box;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     animation: fadeIn 1s ease-in-out;
+    outline: 1px solid #000; /* Black outline for container in light mode */
+  }
+  
+  body.dark-mode .verify-gold-container {
+    background-color: #1e1e1e; /* Dark mode container background color */
+    color: #e0e0e0; /* Dark mode container text color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Dark mode box shadow */
+    outline: none; /* No outline for container in dark mode */
   }
   
   @keyframes fadeIn {
@@ -86,24 +79,31 @@ body {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
-    border: 1px solid var(--input-border-color);
+    border: 1px solid #000; /* Black border for input in light mode */
     border-radius: 4px;
-    background-color: var(--input-background-color);
-    color: var(--text-color);
+    background-color: #fff; /* Light mode input background color */
+    color: #333; /* Light mode input text color */
     box-sizing: border-box;
     transition: border-color 0.3s ease;
-    outline: var(--input-outline); /* Add outline for input */
+    outline: 1px solid #000; /* Black outline for input in light mode */
+  }
+  
+  body.dark-mode .verify-gold-input {
+    border: 1px solid #444; /* Dark mode input border color */
+    background-color: #2c2c2c; /* Dark mode input background color */
+    color: #e0e0e0; /* Dark mode input text color */
+    outline: none; /* No outline for input in dark mode */
   }
   
   .verify-gold-input:focus {
-    border-color: var(--button-background-color);
-    outline: none;
+    border-color: #007bff; /* Focus border color */
+    outline: 2px solid #000; /* Thicker outline on focus */
     animation: pulse 1s infinite;
   }
   
   @keyframes pulse {
     0% {
-      box-shadow: 0 0 0 0 var(--button-background-color);
+      box-shadow: 0 0 0 0 #007bff;
     }
     70% {
       box-shadow: 0 0 10px 10px transparent;
@@ -114,8 +114,8 @@ body {
   }
   
   .verify-gold-button {
-    background-color: var(--button-background-color);
-    color: var(--button-text-color); /* Ensure the button text color is set */
+    background-color: #007bff; /* Button background color */
+    color: #fff; /* Button text color */
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
@@ -124,11 +124,17 @@ body {
     width: 100%;
     box-sizing: border-box;
     font-weight: bold;
-    outline: var(--button-outline); /* Add outline for button */
+    outline: 1px solid #000; /* Black outline for button in light mode */
+  }
+  
+  body.dark-mode .verify-gold-button {
+    background-color: #007bff; /* Button background color in dark mode */
+    color: #e0e0e0; /* Button text color in dark mode */
+    outline: none; /* No outline for button in dark mode */
   }
   
   .verify-gold-button:hover {
-    background-color: var(--button-hover-background-color);
+    background-color: #0056b3; /* Button hover background color */
     transform: translateY(-2px);
   }
   
