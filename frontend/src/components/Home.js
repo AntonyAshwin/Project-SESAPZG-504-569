@@ -18,7 +18,7 @@ function Home() {
       }
 
       try {
-        const response = await fetch('http://localhost:8080/profile', {
+        const response = await fetch('http://localhost:8080/v1/profile', {
           headers: {
             'Content-Type': 'application/json',
             'x-auth-token': token,
