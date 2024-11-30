@@ -34,7 +34,7 @@ function Profile() {
         return;
       }
       try {
-        const response = await fetch('http://localhost:8080/profile', {
+        const response = await fetch('http://localhost:8080/v1/profile', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ function Profile() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:8080/profile', {
+      const response = await fetch('http://localhost:8080/v1/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ function Profile() {
       return false;
     }
     try {
-      const response = await fetch('http://localhost:8080/profile/verify-password', {
+      const response = await fetch('http://localhost:8080/v1/profile/verify-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
