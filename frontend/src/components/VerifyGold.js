@@ -51,7 +51,6 @@ const VerifyGold = () => {
         />
         <button
           onClick={handleVerifyGold}
-          disabled={goldId.length !== 77}
           className="verify-gold-button"
         >
           Verify Gold

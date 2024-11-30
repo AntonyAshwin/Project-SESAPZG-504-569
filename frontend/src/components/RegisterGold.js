@@ -215,7 +215,9 @@ const RegisterGold = () => {
             ))}
           </select>
         </div>
-        <button type="submit">Register Gold</button>
+        <button type="submit" style={{ backgroundColor: '#007bff', color: '#fff', padding: '10px 20px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          Register
+        </button>
       </form>
       {registrationResult && (
         <div>
