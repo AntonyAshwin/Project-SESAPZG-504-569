@@ -45,7 +45,7 @@ const RegisterGold = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:8080/v1/profile', {
+        const response = await fetch('http://localhost:8080/profile', {
           headers: {
             'Content-Type': 'application/json',
             'x-auth-token': token,
@@ -120,7 +120,7 @@ const RegisterGold = () => {
         const userId = decodedToken.id;
 
         // Send the transaction data to the backend
-        const response = await fetch('http://localhost:8080/v1/transaction', {
+        const response = await fetch('http://localhost:8080/transaction', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

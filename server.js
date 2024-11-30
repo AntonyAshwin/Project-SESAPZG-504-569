@@ -33,10 +33,10 @@ const verifyGoldLimiter = rateLimit({
 
 // Use routes
 app.use(authRoutes);  // To directly access the login and register
-app.use('/v1/profile', profileRoutes);
-app.use('/v1/user', getUserRoutes);
-app.use('/v1/transaction', transactionRoutes); // Prefix for transaction routes
-app.use('/v1/verifygold', verifyGoldLimiter, verifyGoldRoutes); // Apply rate limiting to verifyGold route
+app.use('/profile', profileRoutes);
+app.use('/user', getUserRoutes);
+app.use('/transaction', transactionRoutes); // Prefix for transaction routes
+app.use('/verifygold', verifyGoldLimiter, verifyGoldRoutes); // Apply rate limiting to verifyGold route
 
 // Start the server
 const PORT = process.env.PORT || 8080;

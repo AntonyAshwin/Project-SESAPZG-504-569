@@ -15,7 +15,7 @@ const ViewAssets = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:8080/v1/profile', {
+        const response = await fetch('http://localhost:8080/profile', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

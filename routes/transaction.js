@@ -65,4 +65,49 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
+// Route to get transactions with filters, sorting, and pagination
+router.get('/', authMiddleware, async (req, res) => {
+    const { page = 1, orderBy = 'transactionTime', direction = 'desc', filterBy = '' } = req.query;
+    const limit = 10; // Number of transactions per page
+
+    try {
+        // Extract user information from the JWT token
+        const token = req.header('x-auth-token');
+        if (!token) {
+            return res.status(401).json({ message: 'No token, authorization denied' });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+
+        // Build the query object
+        const query = { userId };
+        if (filterBy) {
+            query.transactionType = filterBy;
+        }
+
+        // Fetch transactions from the database with filters, sorting, and pagination
+        const transactions = await Transaction.find(query)
+            .sort({ [orderBy]: direction === 'asc' ? 1 : -1 })
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        // Get the total number of transactions for pagination
+        const totalTransactions = await Transaction.countDocuments(query);
+        const totalPages = Math.ceil(totalTransactions / limit);
+
+        res.status(200).json({
+            transactions,
+            pagination: {
+                totalTransactions,
+                totalPages,
+                currentPage: page,
+            },
+        });
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
 module.exports = router;
