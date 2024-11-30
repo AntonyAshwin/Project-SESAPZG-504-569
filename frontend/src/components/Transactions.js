@@ -18,7 +18,7 @@ function Transactions() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/transaction?page=${page}&orderBy=${orderBy}&direction=${direction}&filterBy=${filterBy}`, {
+      const response = await fetch(`http://localhost:8080/v1/transaction?page=${page}&orderBy=${orderBy}&direction=${direction}&filterBy=${filterBy}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
