@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
-import './TransferGold.css'; // Import the CSS file
 import contractAddress from '../contractAddress'; // Import the contract address
 
-const TransferGold = () => {
+const TransferOwnership = () => {
   const [goldId, setGoldId] = useState('');
   const [newOwner, setNewOwner] = useState('');
   const [transferResult, setTransferResult] = useState('');
@@ -28,7 +27,7 @@ const TransferGold = () => {
     }
   }, []);
 
-  const transferGold = async () => {
+  const transferOwnership = async () => {
     if (contract && accounts.length > 0) {
       try {
         const receipt = await contract.methods.transferOwnership(goldId, newOwner).send({ from: accounts[0] });
@@ -108,37 +107,26 @@ const TransferGold = () => {
   };
 
   return (
-    <div className="transfer-gold-container">
+    <div>
       <h2>Transfer Ownership</h2>
-  <form onSubmit={(e) => { e.preventDefault(); transferGold(); }} className="transfer-gold-form">
-        <div className="form-group">
-          <label htmlFor="goldId">Gold ID:</label>
-          <input
-            type="text"
-            id="goldId"
-            value={goldId}
-            onChange={(e) => setGoldId(e.target.value)}
-            placeholder="Gold ID"
-            className="form-input"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="newOwner">New Owner Address:</label>
-          <input
-            type="text"
-            id="newOwner"
-            value={newOwner}
-            onChange={(e) => setNewOwner(e.target.value)}
-            placeholder="New Owner Address"
-            className="form-input"
-            required
-          />
-        </div>
-        <button type="submit" className="button">Transfer</button>
+      <form onSubmit={(e) => { e.preventDefault(); transferOwnership(); }}>
+        <input
+          type="text"
+          value={goldId}
+          onChange={(e) => setGoldId(e.target.value)}
+          placeholder="Gold ID"
+        />
+        <input
+          type="text"
+          value={newOwner}
+          onChange={(e) => setNewOwner(e.target.value)}
+          placeholder="New Owner Address"
+        />
+        <button type="submit">Transfer Ownership</button>
       </form>
+      {transferResult && <p>{transferResult}</p>}
     </div>
   );
-}
+};
 
-export default TransferGold;
+export default TransferOwnership;
