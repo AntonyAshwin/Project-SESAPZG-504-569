@@ -8,7 +8,7 @@ servers:
   - url: http://localhost:8080/api
 
 paths:
-  /auth/register:
+  /register:
     post:
       summary: Registers a new user (either a buyer or a seller)
       requestBody:
@@ -25,7 +25,7 @@ paths:
         '500':
           description: Server error
 
-  /auth/login:
+  /login:
     post:
       summary: Authenticates a user and provides an access token
       requestBody:
@@ -42,142 +42,68 @@ paths:
         '500':
           description: Server error
 
-  /gold/register:
+  #Transaction API endpoint
+  /v1/transaction:
     post:
-      summary: Registers gold as a digital asset on the blockchain
+      summary: Adds a new transaction for a gold asset
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterGold'
+              $ref: '#/components/schemas/Transaction'
       responses:
         '201':
-          description: Gold registered successfully
+          description: Transaction added successfully
         '400':
           description: Invalid input
         '500':
           description: Server error
-
-  /seller/gold:
     get:
-      summary: Retrieves all gold assets registered by the seller
-      responses:
-        '200':
-          description: List of gold assets
-        '401':
-          description: Unauthorized
-        '500':
-          description: Server error
-
-  /seller/gold/transfers:
-    get:
-      summary: Retrieves ownership transfer records initiated by the seller
-      responses:
-        '200':
-          description: List of transfer records
-        '401':
-          description: Unauthorized
-        '500':
-          description: Server error
-
-  /gold/transfer:
-    post:
-      summary: Transfers ownership of a registered gold asset to a buyer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TransferGold'
-      responses:
-        '200':
-          description: Transfer successful
-        '400':
-          description: Invalid input
-        '401':
-          description: Unauthorized
-        '500':
-          description: Server error
-
-  /gold/verify-owner/{goldId}:
-    get:
-      summary: Verifies the last registered owner of the specified gold asset
+      summary: Retrieves transaction logs for a user's gold assets with pagination, sorting, and filtering
       parameters:
-        - name: goldId
-          in: path
-          required: true
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: orderBy
+          in: query
+          required: false
           schema:
             type: string
-      responses:
-        '200':
-          description: Owner verified
-        '404':
-          description: Gold asset not found
-        '500':
-          description: Server error
-
-  /buyer/gold/acquire:
-    post:
-      summary: Allows the buyer to acquire ownership of gold from the seller
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AcquireGold'
-      responses:
-        '200':
-          description: Acquisition successful
-        '400':
-          description: Invalid input
-        '401':
-          description: Unauthorized
-        '500':
-          description: Server error
-
-  /buyer/gold:
-    get:
-      summary: Retrieves all gold assets owned by the buyer
-      responses:
-        '200':
-          description: List of gold assets
-        '401':
-          description: Unauthorized
-        '500':
-          description: Server error
-
-  /buyer/gold/transfer:
-    post:
-      summary: Transfers ownership of a gold asset to another person
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TransferGold'
-      responses:
-        '200':
-          description: Transfer successful
-        '400':
-          description: Invalid input
-        '401':
-          description: Unauthorized
-        '500':
-          description: Server error
-
-  /buyer/gold/transactions:
-    get:
-      summary: Retrieves transaction logs for all gold assets owned by the buyer
+            default: transactionTime
+        - name: direction
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - name: filterBy
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [register, transfer]
       responses:
         '200':
           description: List of transaction logs
+        '400':
+          description: Invalid input
         '401':
           description: Unauthorized
         '500':
           description: Server error
-
-  /gold/{goldId}:
+          
+  /v1/verifygold/{goldId}:
     get:
       summary: Fetches details of a specific gold asset
       parameters:
@@ -194,49 +120,98 @@ paths:
         '500':
           description: Server error
 
-  /gold/transactions:
+  # **New Profile endpoints added**
+  # Profile related endpoints
+  /v1/profile:
     get:
-      summary: Retrieves a list of all transactions made for any gold asset
+      summary: Retrieves the profile details of the authenticated user
+      security:
+        - bearerAuth: []  # Secured with JWT Bearer token
       responses:
         '200':
-          description: List of transactions
-        '500':
-          description: Server error
-
-  /gold/{goldId}/ownership-history:
-    get:
-      summary: Retrieves the ownership history of the specified gold asset
-      parameters:
-        - name: goldId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Ownership history
+          description: Successfully retrieved profile details
+        '401':
+          description: Unauthorized (token missing or invalid)
         '404':
-          description: Gold asset not found
+          description: User not found
         '500':
           description: Server error
-
-  /buyer/{buyerId}/is-registered:
-    get:
-      summary: Checks if a given buyer is registered on the blockchain
-      parameters:
-        - name: buyerId
-          in: path
-          required: true
-          schema:
-            type: string
+    put:
+      summary: Updates the profile details of the authenticated user
+      security:
+        - bearerAuth: []  # Secured with JWT Bearer token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                oldPassword:
+                  type: string
+                address:
+                  type: string
+                phoneNumber:
+                  type: string
+                publicKey:
+                  type: string
+                aadhaarCardNumber:
+                  type: string
+                pan:
+                  type: string
+                gstin:
+                  type: string
+                businessAddress:
+                  type: string
+                businessLicense:
+                  type: string
+              required:
+                - name
+                - email
       responses:
         '200':
-          description: Buyer is registered
+          description: Profile updated successfully
+        '400':
+          description: Invalid input or old password incorrect
+        '401':
+          description: Unauthorized (token missing or invalid)
         '404':
-          description: Buyer not found
+          description: User not found
         '500':
           description: Server error
 
+  /v1/profile/verify-password:
+    post:
+      summary: Verifies the old password of the authenticated user
+      security:
+        - bearerAuth: []  # Secured with JWT Bearer token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+              required:
+                - oldPassword
+      responses:
+        '200':
+          description: Old password verified
+        '400':
+          description: Old password is incorrect
+        '401':
+          description: Unauthorized (token missing or invalid)
+        '500':
+          description: Server error
+    
 components:
   schemas:
     RegisterUser:
@@ -293,34 +268,27 @@ components:
         - email
         - password
 
-    RegisterGold:
+    Transaction:
       type: object
       properties:
         goldId:
           type: string
-        description:
+        transactionType:
+          type: string
+          enum: ['register', 'transfer']
+        recipientPublicKey:
+          type: string
+          description: "Public key of the recipient (only for transfer transactions)"
+        transactionHash:
           type: string
       required:
         - goldId
+        - transactionType
+        - transactionHash
 
-    TransferGold:
-      type: object
-      properties:
-        goldId:
-          type: string
-        buyerId:
-          type: string
-      required:
-        - goldId
-        - buyerId
-
-    AcquireGold:
-      type: object
-      properties:
-        goldId:
-          type: string
-        sellerId:
-          type: string
-      required:
-        - goldId
-        - sellerId
+      # Added security scheme definition for JWT token
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
