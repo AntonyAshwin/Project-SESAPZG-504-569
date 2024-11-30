@@ -61,12 +61,6 @@ function App() {
                 <Link to="/profile">Profile</Link>
               </li>
               <li>
-                <Link to="/transactions">Transactions</Link>
-              </li>
-              <li>
-                <Link to="/register-gold">Register Gold</Link>
-              </li>
-              <li>
                 <Link to="/verify-gold">Verify Gold</Link> 
               </li>
               <li>

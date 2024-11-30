@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import GoldVerificationABI from '../build/contracts/GoldVerification.json'; // Adjust the path as necessary
 import contractAddress from '../contractAddress'; // Import the contract address
+import './RegisterGold.css'; // Import the CSS file
 import jewelryEnum from '../localResources/jewelryEnum'; // Import the jewelryEnum dictionary
 import bis from '../localResources/BisHallMark'; // Import the BisHallMark dictionary
 
@@ -28,9 +29,11 @@ const RegisterGold = () => {
           const contractInstance = new web3Instance.eth.Contract(GoldVerificationABI.abi, contractAddress);
           setContract(contractInstance);
         })
-        .catch(err => console.error(err));
+        .catch(error => {
+          console.error('Error fetching accounts:', error);
+        });
     } else {
-      console.error('MetaMask is not installed');
+      console.error('Ethereum wallet not detected');
     }
 
     // Fetch GSTIN from the backend
@@ -97,10 +100,7 @@ const RegisterGold = () => {
           convertToHex(bis[bisHallmark]) // Use the value from BisHallMark
         ).send({ from: accounts[0] });
 
-        console.log('Transaction receipt:', receipt);
         const event = receipt.events.GoldRegistered;
-        console.log('GoldRegistered event:', event);
-
         const goldId = event.returnValues.goldId.toString();
         const transactionHash = receipt.transactionHash;
 
@@ -134,7 +134,7 @@ const RegisterGold = () => {
           }),
         });
 
-        if (!response.ok) {
+         if (!response.ok) {
           const data = await response.json();
           setRegistrationResult(data.message || 'Failed to save transaction');
         }
@@ -146,7 +146,7 @@ const RegisterGold = () => {
   };
 
   return (
-    <div>
+    <div className="register-gold-container">
       <h2>Register Gold</h2>
       <form onSubmit={(e) => { e.preventDefault(); registerGold(); }}>
         <div className="form-group">
@@ -215,7 +215,9 @@ const RegisterGold = () => {
             ))}
           </select>
         </div>
-        <button type="submit">Register Gold</button>
+        <button type="submit" style={{ backgroundColor: '#007bff', color: '#fff', padding: '10px 20px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          Register
+        </button>
       </form>
       {registrationResult && (
         <div>

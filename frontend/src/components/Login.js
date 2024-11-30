@@ -62,6 +62,7 @@ function Login({ setIsAuthenticated }) {
       </form>
       <div className="register-prompt">
         <p>Don't have an account?</p>
+        <br></br>
         <Link to="/register" className="button">Register</Link>
       </div>
     </div>
