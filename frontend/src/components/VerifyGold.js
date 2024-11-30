@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './VerifyGold.css';
 
 const VerifyGold = () => {
   const [goldId, setGoldId] = useState('');
@@ -38,29 +39,36 @@ const VerifyGold = () => {
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        value={goldId}
-        onChange={handleInputChange}
-        placeholder="Enter Gold ID"
-      />
-      <button onClick={handleVerifyGold}>
-        Verify Gold
-      </button>
+    <div className="verify-gold-page">
+      <div className="verify-gold-container">
+        <h2>Verify Gold</h2>
+        <input
+          type="text"
+          value={goldId}
+          onChange={handleInputChange}
+          placeholder="Enter Gold ID"
+          className="verify-gold-input"
+        />
+        <button
+          onClick={handleVerifyGold}
+          className="verify-gold-button"
+        >
+          Verify Gold
+        </button>
 
-      {error && <p>{error}</p>}
-      {goldDetails && (
-        <div>
-          <p>Weight: {goldDetails.weight}</p>
-          <p>Purity: {goldDetails.purity}</p>
-          <p>Current Owner: {goldDetails.currentOwner}</p>
-          <p>Initial Owner: {goldDetails.initialOwner}</p>
-          <p>Registration Date: {goldDetails.registrationDate}</p>
-          <p>Gold Type: {goldDetails.goldType}</p>
-          <p>BIS Hallmark: {goldDetails.bisHallmark}</p>
-        </div>
-      )}
+        {error && <p className="verify-gold-error">{error}</p>}
+        {goldDetails && (
+          <div className="verify-gold-details">
+            <p>Weight: {goldDetails.weight}</p>
+            <p>Purity: {goldDetails.purity}</p>
+            <p>Current Owner: {goldDetails.currentOwner}</p>
+            <p>Initial Owner: {goldDetails.initialOwner}</p>
+            <p>Registration Date: {goldDetails.registrationDate}</p>
+            <p>Gold Type: {goldDetails.goldType}</p>
+            <p>BIS Hallmark: {goldDetails.bisHallmark}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

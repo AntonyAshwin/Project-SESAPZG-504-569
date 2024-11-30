@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import LoadingSpinner from './LoadingSpinner';
 import './Home.css';
 
 function Home() {
@@ -48,41 +49,34 @@ function Home() {
   }
 
   if (!user) {
-    return <p>Loading...</p>;
+    return <LoadingSpinner />;
   }
 
   return (
     <div className="home-container">
-      {!user ? (
-        <div className="welcome-section">
-          <h1>Welcome to GoldChain</h1>
-          <p>Your trusted platform for managing gold transactions on the blockchain.</p>
-          <div className="cta-buttons">
-            <Link to="/login" className="button">Login</Link>
-            <Link to="/register" className="button">Register</Link>
-          </div>
-        </div>
-      ) : (
-        <div className="user-section">
-          <h1>Welcome Back, {user.name}!</h1>
-          <p>Manage your profile, view transactions, register gold, and transfer gold.</p>
-          <div className="cta-buttons">
-            {user.role === 'seller' && (
-              <>
-                <button onClick={() => navigate('/register-gold')} className="button">Register Gold</button>
-                <button onClick={() => navigate('/transfer-gold')} className="button">Transfer Gold</button>
-                <button onClick={() => navigate('/transactions')} className="button">View Transactions</button>
-              </>
-            )}
-            {user.role === 'buyer' && (
-              <>
-                <button onClick={() => navigate('/transfer-gold')} className="button">Transfer Gold</button>
-                <button onClick={() => navigate('/transactions')} className="button">View Transactions</button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      <div className="sidebar">
+        <ul>
+          {user.role === 'seller' && (
+            <>
+              <li><Link to="/register-gold">Register Gold</Link></li>
+              <li><Link to="/transfer-gold">Transfer Gold</Link></li>
+              <li><Link to="/transactions">View Transactions</Link></li>
+            </>
+          )}
+          {user.role === 'buyer' && (
+            <>
+              <li><Link to="/transfer-gold">Transfer Gold</Link></li>
+              <li><Link to="/transactions">View Transactions</Link></li>
+            </>
+          )}
+          <li><Link to="/verify-gold">Verify Gold</Link></li> {/* New tile for both buyers and sellers */}
+        </ul>
+      </div>
+      <div className="main-content">
+        <h1>Welcome Back, {user.name}!</h1>
+        <p>Manage your profile, view transactions, register gold, and transfer gold.</p>
+        {/* Add widgets here */}
+      </div>
     </div>
   );
 }

@@ -1,25 +1,46 @@
-# Project-SESAPZG-504-569
-Hi All,  I am Antony Ashwin (2023sl93002). I am currently completing my 3rd semester of M.Tech in Software Engineering through the Work Integrated Learning program at BITS Pilani. This is my combined final project assignment for the courses 24_SESAPZG504 and 24_SESAPZG569.
+# Project-SESAPZG-504-569  (A Blockchain Approach to Gold Provenance and Verification)
 
+Hi All, This is our combined final project assignment for the courses 24_SESAPZG504 and 24_SESAPZG569. Our team consists of 4 members, Anthony Ashiwin(2023sl93002), Abhishek Bantiya(2023sl93003), 
+Abani Kaur Kohli(2023sl93056), Suyash Triipathi(2023sl93048).
+
+Project Introduction-
+Gold, as a valuable commodity, faces numerous challenges in ensuring its authenticity, ethical sourcing, and traceability. Traditional verification methods often lack transparency and are susceptible to fraud. Blockchain technology offers a transformative solution by creating a decentralized, immutable, and transparent system for gold provenance and verification.
 
 HOW TO LOCALLY RUN IT 
 
-1. Clone this repo 
-2. Get the .env file from me or you can just make one yourself (please put the .env at the root level)
-    PORT=8080
-    MONGO_URI= <mongodb uri to connect to the cluster>
-    JWT_SECRET= <your jwt secret key>
-3. npm i - will install all dependencies for both frontend and backend (i have updared the package.json to have a cd and run npm i again in frontend), you might have to instal jsonwebtoken again if that error comes up when running - not sure why
-4. npm start - will run both frontend and backend because of the script in package.json (to individually run them just npm start at root for backend, cd inside frontend and npm start to run the frontend) - also run on chrome and not brave or firefox or ie 
-5. 
-   . if mongouri is undefined error then you probably didnt set the .env file in the right directory or you have a typo in there
-   
-   . please use your own mongouri to see the db changes \n
-   
-   . if port error then you probably have that port being used somewhere, please use npx kill-port <port-number> to kill that port.
-   
-   . if all works fine then the UI should load on your browser on its own (or maybe its only for vscode not sure)
-6. Please have the metamask extension installed - as of now only works on chrome 
+Here’s a concise breakdown of the steps:
+
+1. Install Dependencies 
+   - Use `npm install` to set up all necessary project dependencies, including blockchain-related libraries.
+
+2. Install Ganache
+   - Install Ganache, a blockchain emulator, using `npm install -g ganache` (or download the desktop app).  
+   - Start Ganache to create a local blockchain for development and testing.
+
+3. Set Up MetaMask [Uploading ModuleDecomposition.drawio…]()
+
+   - Install the MetaMask browser extension and create/import a wallet.  
+   - Configure MetaMask to connect to Ganache by adding a custom RPC network using the Ganache RPC URL (e.g., `http://127.0.0.1:7545`).  
+
+4. Link Ganache and MetaMask  
+   - Copy an account private key from Ganache and import it into MetaMask to connect your wallet with the local blockchain.  
+
+5. Add Environment Variables  
+   - Create a `.env` file to securely store sensitive variables like MongoDB connection URIs or API keys.  
+   - Example `.env` file:  
+     ```plaintext
+     MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/<database>?retryWrites=true&w=majority
+     ```
+
+6. Start the Project
+   - Run `npm start` to launch the project. It will connect the backend to MongoDB and integrate blockchain functionality.
+
+Now you’re ready to interact with the blockchain-based project locally!
+
+
+
+
+
 
 
 
