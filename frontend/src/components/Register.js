@@ -1,87 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Web3 from 'web3';
 import './Register.css';
 
-function Register() {
+const Register = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [role, setRole] = useState('buyer');
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [aadhaarCardNumber, setAadhaarCardNumber] = useState('');
   const [publicKey, setPublicKey] = useState('');
+  const [role, setRole] = useState('buyer');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [aadhaarCardNumber, setAadhaarCardNumber] = useState('');
   const [pan, setPan] = useState('');
   const [gstin, setGstin] = useState('');
   const [businessAddress, setBusinessAddress] = useState('');
   const [businessLicense, setBusinessLicense] = useState('');
   const [error, setError] = useState('');
-  const [showAadhaar, setShowAadhaar] = useState(false);
-  const [showPan, setShowPan] = useState(false);
-  const [metamaskConnected, setMetamaskConnected] = useState(false);
-  const [dateOfBirth, setDateOfBirth] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length > 0) {
-          setPublicKey(accounts[0]);
-          setMetamaskConnected(true);
-        } else {
-          setPublicKey('');
-          setMetamaskConnected(false);
-        }
-      });
-    }
-  }, []);
-
-  const connectMetamask = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setPublicKey(accounts[0]);
-        setMetamaskConnected(true);
-      } catch (err) {
-        setError('Failed to connect to MetaMask');
-      }
-    } else {
-      setError('MetaMask is not installed');
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    if (!/^\d{10}$/.test(phoneNumber)) {
-      setError('Phone number must be 10 digits long');
-      return;
-    }
-
     const userData = {
+      name,
       email,
       password,
-      name,
       role,
       address,
       phoneNumber,
       aadhaarCardNumber,
       publicKey,
       pan,
-      dateOfBirth, // Add this line
+      dateOfBirth,
       gstin: role === 'seller' ? gstin : undefined,
       businessAddress: role === 'seller' ? businessAddress : undefined,
       businessLicense: role === 'seller' ? businessLicense : undefined,
     };
 
     try {
-      const response = await fetch('http://localhost:8080/register', {
+      const response = await fetch('http://localhost:8080/v1/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
       });
-
       const data = await response.json();
       if (response.ok) {
         navigate('/login');
@@ -93,11 +57,25 @@ function Register() {
     }
   };
 
+  const connectMetaMask = async () => {
+    if (window.ethereum) {
+      try {
+        const web3 = new Web3(window.ethereum);
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await web3.eth.getAccounts();
+        setPublicKey(accounts[0]);
+      } catch (err) {
+        setError('Failed to connect to MetaMask');
+      }
+    } else {
+      setError('MetaMask is not installed');
+    }
+  };
+
   return (
     <div className="register-container">
       <h2>Register</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleRegister}>
         <div className="form-group">
           <label>Name:</label>
           <input
@@ -126,6 +104,13 @@ function Register() {
           />
         </div>
         <div className="form-group">
+          <label>Role:</label>
+          <select value={role} onChange={(e) => setRole(e.target.value)} required>
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+          </select>
+        </div>
+        <div className="form-group">
           <label>Date of Birth:</label>
           <input
             type="date"
@@ -133,29 +118,6 @@ function Register() {
             onChange={(e) => setDateOfBirth(e.target.value)}
             required
           />
-        </div>
-        <div className="form-group">
-          <label>Role:</label>
-          <div className="role-selection">
-            <label>
-              <input
-                type="radio"
-                value="buyer"
-                checked={role === 'buyer'}
-                onChange={(e) => setRole(e.target.value)}
-              />
-              Buyer
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="seller"
-                checked={role === 'seller'}
-                onChange={(e) => setRole(e.target.value)}
-              />
-              Seller
-            </label>
-          </div>
         </div>
         <div className="form-group">
           <label>Address:</label>
@@ -176,54 +138,22 @@ function Register() {
           />
         </div>
         <div className="form-group">
-          <label>Public Key:</label>
+          <label>Aadhaar Card Number:</label>
           <input
             type="text"
-            value={publicKey}
-            readOnly
+            value={aadhaarCardNumber}
+            onChange={(e) => setAadhaarCardNumber(e.target.value)}
             required
           />
-          {!metamaskConnected && (
-            <button type="button" onClick={connectMetamask} className="connect-metamask-button">
-              Connect MetaMask
-            </button>
-          )}
         </div>
         <div className="form-group">
           <label>PAN:</label>
-          <div className="input-with-toggle">
-            <input
-              type={showPan ? 'text' : 'password'}
-              value={pan}
-              onChange={(e) => setPan(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPan(!showPan)}
-              className="toggle-button"
-            >
-              {showPan ? 'Hide' : 'Show'}
-            </button>
-          </div>
-        </div>
-        <div className="form-group">
-          <label>Aadhaar Card Number:</label>
-          <div className="input-with-toggle">
-            <input
-              type={showAadhaar ? 'text' : 'password'}
-              value={aadhaarCardNumber}
-              onChange={(e) => setAadhaarCardNumber(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowAadhaar(!showAadhaar)}
-              className="toggle-button"
-            >
-              {showAadhaar ? 'Hide' : 'Show'}
-            </button>
-          </div>
+          <input
+            type="text"
+            value={pan}
+            onChange={(e) => setPan(e.target.value)}
+            required
+          />
         </div>
         {role === 'seller' && (
           <>
@@ -256,10 +186,22 @@ function Register() {
             </div>
           </>
         )}
+        <div className="form-group">
+          <label>Public Key:</label>
+          <input
+            type="text"
+            value={publicKey}
+            readOnly
+          />
+          <button type="button" onClick={connectMetaMask}>
+            Connect MetaMask
+          </button>
+        </div>
         <button type="submit">Register</button>
       </form>
+      {error && <p className="error">{error}</p>}
     </div>
   );
-}
+};
 
 export default Register;

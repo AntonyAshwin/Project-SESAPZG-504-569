@@ -23,10 +23,10 @@ router.get('/', authMiddleware, async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.json(user);
+        res.status(200).json(user);
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send('Server error');
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 
@@ -56,16 +56,16 @@ router.post('/verify-password', authMiddleware, async (req, res) => {
             return res.status(400).json({ message: 'Old password is incorrect' });
         }
 
-        res.json({ message: 'Old password is correct' });
+        res.status(200).json({ message: 'Old password is correct' });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send('Server error');
+        console.error('Error verifying old password:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 
 // Profile route to update user details
 router.put('/', authMiddleware, async (req, res) => {
-    const { name, email, password, oldPassword, address, phoneNumber, publicKey, aadhaarCardNumber, pan, gstin, businessAddress, businessLicense } = req.body;
+    const { name, email, password, address, phoneNumber, publicKey, aadhaarCardNumber, pan, gstin, businessAddress, businessLicense } = req.body;
 
     try {
         // Extract user ID from the JWT token
@@ -85,7 +85,7 @@ router.put('/', authMiddleware, async (req, res) => {
 
         // Confirm old password if changing to a new password
         if (password) {
-            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
             if (!isMatch) {
                 return res.status(400).json({ message: 'Old password is incorrect' });
             }
@@ -107,10 +107,10 @@ router.put('/', authMiddleware, async (req, res) => {
 
         await user.save();
 
-        res.json({ message: 'Profile updated successfully' });
+        res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send('Server error');
+        console.error('Error updating profile:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 

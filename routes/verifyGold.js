@@ -8,7 +8,7 @@ const GoldVerificationABI = require('../frontend/src/build/contracts/GoldVerific
 const contractAddress = require('../frontend/src/contractAddress.js'); // Adjust the path as necessary
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545')); // Connect to local Ganache
-const contract = new web3.eth.Contract(GoldVerificationABI.abi, "0xD5ca42A84DC2fd82F4C00dC7Ec3A95cB1eD65299");
+const contract = new web3.eth.Contract(GoldVerificationABI.abi, contractAddress);
 
 router.get('/:goldId', authMiddleware, async (req, res) => {
   const goldId = req.params.goldId;
@@ -43,10 +43,10 @@ router.get('/:goldId', authMiddleware, async (req, res) => {
       bisHallmark: web3.utils.hexToAscii(gold[8]) // Convert hex to ASCII
     };
 
-    res.json(goldDetails);
+    res.status(200).json(goldDetails);
   } catch (error) {
     console.error('Error fetching gold details:', error);
-    res.status(500).send('Error fetching gold details');
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

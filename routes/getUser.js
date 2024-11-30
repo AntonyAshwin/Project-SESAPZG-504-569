@@ -7,6 +7,11 @@ router.get('/:publicKey', async (req, res) => {
     try {
         const { publicKey } = req.params;
 
+        // Validate public key
+        if (!publicKey) {
+            return res.status(400).json({ message: 'Public key is required' });
+        }
+
         // Fetch user details from the database by public key
         const user = await User.findOne({ publicKey }).select('name role businessAddress'); // Select only necessary fields
         if (!user) {
@@ -24,10 +29,10 @@ router.get('/:publicKey', async (req, res) => {
             responseData.businessAddress = user.businessAddress;
         }
 
-        res.json(responseData);
+        res.status(200).json(responseData);
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send('Server error');
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 
