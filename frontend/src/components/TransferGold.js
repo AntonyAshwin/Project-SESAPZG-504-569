@@ -51,7 +51,7 @@ const TransferOwnership = () => {
         const userId = decodedToken.id;
 
         // Send the transaction data to the backend
-        const response = await fetch('http://localhost:8080/transaction', {
+        const response = await fetch('http://localhost:8080/v1/transaction', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const TransferOwnership = () => {
         const userId = decodedToken.id;
 
         // Send the transaction data to the backend with isSuccessful as false
-        await fetch('http://localhost:8080/transaction', {
+        await fetch('http://localhost:8080/v1/transaction', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

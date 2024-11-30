@@ -12,7 +12,7 @@ const VerifyGold = () => {
   const handleVerifyGold = async () => {
     const token = localStorage.getItem('token'); // Get the JWT token from localStorage
     try {
-      const response = await fetch(`http://localhost:8080/verifygold/${goldId}`, {
+      const response = await fetch(`http://localhost:8080/v1/verifygold/${goldId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
