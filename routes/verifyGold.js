@@ -8,7 +8,7 @@ const GoldVerificationABI = require('../frontend/src/build/contracts/GoldVerific
 const contractAddress = require('../frontend/src/contractAddress.js'); // Adjust the path as necessary
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:7545')); // Connect to local Ganache
-const contract = new web3.eth.Contract(GoldVerificationABI.abi, contractAddress);
+const contract = new web3.eth.Contract(GoldVerificationABI.abi, "0x2E6D8c969b4eC2AE1a310D2e09B401D0620574Ee");
 
 router.get('/:goldId', authMiddleware, async (req, res) => {
   const goldId = req.params.goldId;
